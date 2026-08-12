@@ -1,20 +1,3 @@
-<script setup>
-import { useAuthStore } from '@/stores/auth'
-import { useRouter } from 'vue-router'
-
-defineProps({
-  title: { type: String, default: '' },
-})
-
-const authStore = useAuthStore()
-const router = useRouter()
-
-function handleLogout() {
-  authStore.logout()
-  router.push({ name: 'login' })
-}
-</script>
-
 <template>
   <div class="layout">
     <header class="topbar">
@@ -56,138 +39,19 @@ function handleLogout() {
   </div>
 </template>
 
-<style scoped>
-.layout {
-  min-height: 100vh;
-  background: var(--color-bg);
-}
+<script setup>
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
 
-.topbar {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 0.85rem 1.75rem;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-  flex-wrap: wrap;
-}
+defineProps({
+  title: { type: String, default: '' },
+})
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  font-size: 1.05rem;
-  text-decoration: none;
-}
+const authStore = useAuthStore()
+const router = useRouter()
 
-.brand-icon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-primary);
-  border-radius: 9px;
-  flex-shrink: 0;
+function handleLogout() {
+  authStore.logout()
+  router.push({ name: 'login' })
 }
-
-.brand-icon svg {
-  width: 17px;
-  height: 17px;
-}
-
-.nav-links {
-  display: flex;
-  gap: 0.35rem;
-  flex: 1;
-  flex-wrap: wrap;
-}
-
-.nav-link {
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  color: var(--color-text-muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: background 0.15s ease;
-}
-
-.nav-link:hover {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
-}
-
-.nav-link.router-link-active {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-left: auto;
-}
-
-.avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--color-primary-soft);
-  color: var(--color-primary-hover);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-  flex-shrink: 0;
-}
-
-.user-meta {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.user-meta strong {
-  font-size: 0.88rem;
-  color: var(--color-text);
-}
-
-.user-meta span {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-}
-
-.logout-btn {
-  padding: 0.45rem 0.9rem;
-  border: 1.5px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.logout-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.content {
-  padding: 2rem 1.75rem;
-  max-width: 1080px;
-  margin: 0 auto;
-}
-
-.page-title {
-  font-size: 1.3rem;
-  margin-bottom: 1.25rem;
-}
-</style>
+</script>

@@ -1,54 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-import AppLayout from '@/components/AppLayout.vue'
-import * as prumadaService from '@/services/prumadaService'
-
-const consultaForm = ref({
-  tipo: 'COZINHA',
-  numPavimentos: null,
-  desconector: '50mm',
-  condicaoSanca: 'SEM_SANCA',
-})
-const consultando = ref(false)
-const erroConsulta = ref('')
-const resultado = ref(null)
-
-const tipoLista = ref('COZINHA')
-const listaPrumadas = ref([])
-const carregandoLista = ref(false)
-const erroLista = ref('')
-const buscouLista = ref(false)
-
-async function handleConsultar() {
-  erroConsulta.value = ''
-  resultado.value = null
-  consultando.value = true
-
-  try {
-    resultado.value = await prumadaService.consultar(consultaForm.value)
-  } catch (error) {
-    erroConsulta.value =
-      error.response?.data?.mensagem ?? 'Nenhuma configuração encontrada para os parâmetros informados.'
-  } finally {
-    consultando.value = false
-  }
-}
-
-async function handleListar() {
-  erroLista.value = ''
-  carregandoLista.value = true
-  buscouLista.value = true
-
-  try {
-    listaPrumadas.value = await prumadaService.listarPorTipo(tipoLista.value)
-  } catch {
-    erroLista.value = 'Não foi possível carregar as prumadas.'
-  } finally {
-    carregandoLista.value = false
-  }
-}
-</script>
-
 <template>
   <AppLayout title="Prumadas">
     <section class="card">
@@ -102,24 +51,24 @@ async function handleListar() {
 
       <p v-if="erroConsulta" class="msg erro">{{ erroConsulta }}</p>
 
-      <div v-if="resultado" class="resultado">
-        <div class="resultado-item">
+      <div v-if="resultado" class="painel">
+        <div class="painel-item">
           <span>Tipo</span>
           <strong>{{ resultado.tipo }}</strong>
         </div>
-        <div class="resultado-item">
+        <div class="painel-item">
           <span>Faixa de pavimentos</span>
           <strong>{{ resultado.numPavimentos }}</strong>
         </div>
-        <div class="resultado-item">
+        <div class="painel-item">
           <span>Desconector</span>
           <strong>{{ resultado.desconector }}</strong>
         </div>
-        <div class="resultado-item">
+        <div class="painel-item">
           <span>Condição da sanca</span>
           <strong>{{ resultado.condicaoSanca }}</strong>
         </div>
-        <div class="resultado-item full">
+        <div class="painel-item full">
           <span>Descrição</span>
           <p>{{ resultado.descricao }}</p>
         </div>
@@ -127,9 +76,9 @@ async function handleListar() {
     </section>
 
     <section class="card">
-      <div class="list-header">
+      <div class="card-header">
         <h2>Listar prumadas por tipo</h2>
-        <div class="filtro-lista">
+        <div class="filtro-grupo">
           <select v-model="tipoLista">
             <option value="COZINHA">Cozinha</option>
             <option value="ARS">ARS</option>
@@ -167,192 +116,54 @@ async function handleListar() {
   </AppLayout>
 </template>
 
-<style scoped>
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 1.75rem;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 1.5rem;
-}
+<script setup>
+import { ref } from 'vue'
+import AppLayout from '@/components/AppLayout.vue'
+import * as prumadaService from '@/services/prumadaService'
 
-.card h2 {
-  font-size: 1.1rem;
-  margin-bottom: 0.25rem;
-}
+const consultaForm = ref({
+  tipo: 'COZINHA',
+  numPavimentos: null,
+  desconector: '50mm',
+  condicaoSanca: 'SEM_SANCA',
+})
+const consultando = ref(false)
+const erroConsulta = ref('')
+const resultado = ref(null)
 
-.subtitle {
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-  margin-bottom: 1.25rem;
-}
+const tipoLista = ref('COZINHA')
+const listaPrumadas = ref([])
+const carregandoLista = ref(false)
+const erroLista = ref('')
+const buscouLista = ref(false)
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem 1.25rem;
-}
+async function handleConsultar() {
+  erroConsulta.value = ''
+  resultado.value = null
+  consultando.value = true
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.field.actions {
-  grid-column: 1 / -1;
-  justify-content: flex-end;
-  align-items: flex-end;
-}
-
-label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-input,
-select {
-  padding: 0.6rem 0.75rem;
-  border: 1.5px solid var(--color-border);
-  border-radius: 8px;
-  font-size: 0.9rem;
-  background: var(--color-bg);
-  color: var(--color-text);
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-soft);
-  background: var(--color-surface);
-}
-
-button {
-  padding: 0.65rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  background: var(--color-primary);
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  white-space: nowrap;
-}
-
-button:hover:not(:disabled) {
-  background: var(--color-primary-hover);
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.msg {
-  margin-top: 1rem;
-  padding: 0.6rem 0.85rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-}
-
-.msg.erro {
-  color: var(--color-danger);
-  background: var(--color-danger-light);
-}
-
-.resultado {
-  margin-top: 1.25rem;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem 1.5rem;
-  padding: 1.25rem;
-  background: var(--color-primary-light);
-  border-radius: 8px;
-}
-
-.resultado-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.resultado-item.full {
-  grid-column: 1 / -1;
-}
-
-.resultado-item span {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.resultado-item strong {
-  font-size: 0.95rem;
-  color: var(--color-text);
-}
-
-.resultado-item p {
-  font-size: 0.9rem;
-  color: var(--color-text);
-  line-height: 1.4;
-}
-
-.list-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.list-header h2 {
-  margin-bottom: 0;
-}
-
-.filtro-lista {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.filtro-lista select {
-  min-width: 140px;
-}
-
-.tabela {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
-}
-
-.tabela th {
-  text-align: left;
-  padding: 0.6rem 0.5rem;
-  color: var(--color-text-muted);
-  font-weight: 600;
-  border-bottom: 1.5px solid var(--color-border);
-}
-
-.tabela td {
-  padding: 0.65rem 0.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-@media (max-width: 640px) {
-  .form-grid,
-  .resultado {
-    grid-template-columns: 1fr;
-  }
-
-  .field.actions {
-    align-items: stretch;
+  try {
+    resultado.value = await prumadaService.consultar(consultaForm.value)
+  } catch (error) {
+    erroConsulta.value =
+      error.response?.data?.mensagem ??
+      'Nenhuma configuração encontrada para os parâmetros informados.'
+  } finally {
+    consultando.value = false
   }
 }
-</style>
+
+async function handleListar() {
+  erroLista.value = ''
+  carregandoLista.value = true
+  buscouLista.value = true
+
+  try {
+    listaPrumadas.value = await prumadaService.listarPorTipo(tipoLista.value)
+  } catch {
+    erroLista.value = 'Não foi possível carregar as prumadas.'
+  } finally {
+    carregandoLista.value = false
+  }
+}
+</script>
