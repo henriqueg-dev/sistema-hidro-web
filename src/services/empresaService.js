@@ -11,3 +11,7 @@ export function listarTodas() {
 export function buscarPorId(id) {
   return api.get(`/api/empresas/${id}`).then((response) => response.data)
 }
+
+export function atualizar(id, empresa) {
+  return api.put(`/api/empresas/${id}`, empresa).then((response) => response.data)
+}

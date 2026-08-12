@@ -18,18 +18,24 @@
 
     <section class="card">
       <h2>Empresas cadastradas</h2>
+      <p class="subtitle">Clique em uma empresa para ver seus dados e empreendimentos.</p>
 
       <p v-if="carregandoLista" class="subtitle">Carregando...</p>
       <p v-else-if="!empresas.length" class="subtitle">Nenhuma empresa cadastrada ainda.</p>
 
       <div v-else class="grade-cards">
-        <article v-for="empresa in empresas" :key="empresa.id" class="card-item">
+        <RouterLink
+          v-for="empresa in empresas"
+          :key="empresa.id"
+          class="card-item"
+          :to="{ name: 'empresa-detalhe', params: { id: empresa.id } }"
+        >
           <div class="card-item-icone">
             <span class="card-item-iniciais">{{ iniciais(empresa.nome) }}</span>
           </div>
 
           <strong class="card-item-nome" :title="empresa.nome">{{ empresa.nome }}</strong>
-        </article>
+        </RouterLink>
       </div>
     </section>
   </AppLayout>

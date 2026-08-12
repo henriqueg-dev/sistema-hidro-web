@@ -21,9 +21,10 @@ const router = createRouter({
       component: () => import('@/views/EmpresasView.vue'),
     },
     {
-      path: '/empreendimentos',
-      name: 'empreendimentos',
-      component: () => import('@/views/EmpreendimentosView.vue'),
+      path: '/empresas/:id',
+      name: 'empresa-detalhe',
+      component: () => import('@/views/EmpresaDetalheView.vue'),
+      props: true,
     },
     {
       path: '/prumadas',
