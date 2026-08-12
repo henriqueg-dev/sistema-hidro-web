@@ -1,0 +1,327 @@
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.card h2:has(+ .subtitle) {
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.card h2 + .subtitle {
+  margin-bottom: 1.25rem;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.card-header h2 {
+  margin-bottom: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 1.25rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-row .field {
+  flex: 1;
+}
+
+.field.actions {
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+:is(.card, .login-card) label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+:is(.card, .login-card) input,
+:is(.card, .login-card) select {
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+:is(.card, .login-card) input:focus,
+:is(.card, .login-card) select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+  background: var(--color-surface);
+}
+
+:is(.card, .login-card) button {
+  padding: 0.65rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+:is(.card, .login-card) button:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+:is(.card, .login-card) button:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+:is(.card, .login-card) button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.card h1 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.texto-muted {
+  color: var(--color-text-muted);
+}
+
+.texto-secundario {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.filtro {
+  max-width: 240px;
+}
+
+.filtro-grupo {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filtro-grupo select {
+  min-width: 140px;
+}
+
+.btn-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.msg {
+  margin-top: 1rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.msg.erro {
+  color: var(--color-danger);
+  background: var(--color-danger-light);
+}
+
+.msg.sucesso {
+  color: var(--color-success);
+  background: #f0fdf4;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.tabela th {
+  text-align: left;
+  padding: 0.6rem 0.5rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  border-bottom: 1.5px solid var(--color-border);
+}
+
+.tabela td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tabela .acoes {
+  text-align: right;
+}
+
+.grade-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1.1rem;
+}
+
+.card-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-surface);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.card-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.card-item-icone {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-light);
+}
+
+.card-item-iniciais {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.03em;
+}
+
+.card-item-nome {
+  display: block;
+  padding: 0.75rem 0.85rem 0.9rem;
+  font-size: 0.9rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.painel {
+  margin-top: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem 1.5rem;
+  padding: 1.25rem;
+  background: var(--color-primary-light);
+  border-radius: 8px;
+}
+
+.painel-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.painel-item.full {
+  grid-column: 1 / -1;
+}
+
+.painel-item span {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.painel-item strong {
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.painel-item p {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.badge {
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.status {
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.status.ativo {
+  color: var(--color-success);
+}
+
+.status.inativo {
+  color: var(--color-danger);
+}
+
+@media (max-width: 640px) {
+  .form-grid,
+  .painel {
+    grid-template-columns: 1fr;
+  }
+
+  .field.actions {
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 560px) {
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
