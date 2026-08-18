@@ -40,9 +40,10 @@
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
   gap: 1rem 1.25rem;
-  max-width: 1100px;
+  max-width: 900px;
 }
 
 .form-row {
@@ -50,6 +51,30 @@
   gap: 1rem;
   align-items: flex-end;
   max-width: 640px;
+}
+
+.form-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.form-linha .field {
+  flex: 1 1 150px;
+  min-width: 0;
+}
+
+.form-linha .field.amplo {
+  flex: 2 1 200px;
+}
+
+.form-linha .field.estreito {
+  flex: 0 1 110px;
+}
+
+.form-linha .field.actions {
+  flex: 0 0 auto;
 }
 
 .field {
@@ -258,6 +283,21 @@
   display: block;
   padding: 0.75rem 0.85rem 0.9rem;
   font-size: 0.9rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-item-nome:has(+ .card-item-info) {
+  padding-bottom: 0.15rem;
+}
+
+.card-item-info {
+  display: block;
+  padding: 0 0.85rem 0.9rem;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
