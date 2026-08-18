@@ -1,14 +1,14 @@
 <template>
   <AppLayout title="Empresas">
     <section class="card">
-      <h2>Nova empresa</h2>
+      <h2>Adicionar empresa</h2>
       <form class="form-row" @submit.prevent="handleCriar">
         <div class="field">
           <label for="nome">Nome da empresa</label>
           <input id="nome" v-model="nome" type="text" required placeholder="Ex: Construtora Alfa" />
         </div>
         <button type="submit" :disabled="criando">
-          {{ criando ? 'Criando...' : 'Adicionar' }}
+          {{ criando ? 'Adicionando...' : 'Adicionar empresa' }}
         </button>
       </form>
 
@@ -72,11 +72,11 @@ async function handleCriar() {
 
   try {
     await empresaService.criar({ nome: nome.value })
-    sucesso.value = `Empresa "${nome.value}" criada com sucesso.`
+    sucesso.value = `Empresa "${nome.value}" adicionada com sucesso.`
     nome.value = ''
     await carregarEmpresas()
   } catch (error) {
-    erro.value = error.response?.data?.mensagem ?? 'Não foi possível criar a empresa.'
+    erro.value = error.response?.data?.mensagem ?? 'Não foi possível adicionar a empresa.'
   } finally {
     criando.value = false
   }

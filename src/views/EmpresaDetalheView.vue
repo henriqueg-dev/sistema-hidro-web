@@ -11,18 +11,18 @@
         <button
           type="button"
           class="aba"
-          :class="{ ativa: abaAtiva === 'dados' }"
-          @click="trocarAba('dados')"
-        >
-          Dados
-        </button>
-        <button
-          type="button"
-          class="aba"
           :class="{ ativa: abaAtiva === 'empreendimentos' }"
           @click="trocarAba('empreendimentos')"
         >
           Empreendimentos
+        </button>
+        <button
+          type="button"
+          class="aba"
+          :class="{ ativa: abaAtiva === 'dados' }"
+          @click="trocarAba('dados')"
+        >
+          Dados
         </button>
       </nav>
 
@@ -66,11 +66,11 @@
 
       <template v-else>
         <section class="card">
-          <h2>Novo empreendimento</h2>
+          <h2>Adicionar empreendimento</h2>
           <p class="subtitle">Será vinculado a {{ empresa?.nome }}.</p>
 
-          <form class="form-grid" @submit.prevent="handleCriar">
-            <div class="field">
+          <form class="form-linha" @submit.prevent="handleCriar">
+            <div class="field amplo">
               <label for="nome">Nome</label>
               <input
                 id="nome"
@@ -84,14 +84,14 @@
             <div class="field">
               <label for="tipo">Tipo</label>
               <select id="tipo" v-model="form.tipo">
-                <option value="CASA">Casa</option>
-                <option value="PREDIO">Prédio</option>
-                <option value="GALPAO">Galpão</option>
+                <option v-for="(rotulo, valor) in TIPOS" :key="valor" :value="valor">
+                  {{ rotulo }}
+                </option>
               </select>
             </div>
 
-            <div class="field">
-              <label for="numPavimentos">Número de pavimentos</label>
+            <div class="field estreito">
+              <label for="numPavimentos">Pavimentos</label>
               <input
                 id="numPavimentos"
                 v-model.number="form.numPavimentos"
@@ -101,7 +101,7 @@
               />
             </div>
 
-            <div class="field">
+            <div class="field amplo">
               <label for="endereco">Endereço</label>
               <input
                 id="endereco"
@@ -125,7 +125,7 @@
 
             <div class="field actions">
               <button type="submit" :disabled="criando">
-                {{ criando ? 'Criando...' : 'Criar empreendimento' }}
+                {{ criando ? 'Adicionando...' : 'Adicionar' }}
               </button>
             </div>
           </form>
@@ -142,28 +142,24 @@
             Nenhum empreendimento cadastrado para essa empresa.
           </p>
 
-          <table v-else class="tabela">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Tipo</th>
-                <th>Pavimentos</th>
-                <th>Endereço</th>
-                <th>Concessionária</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="empreendimento in empreendimentos" :key="empreendimento.id">
-                <td>{{ empreendimento.nome }}</td>
-                <td>
-                  <span class="badge">{{ empreendimento.tipo }}</span>
-                </td>
-                <td>{{ empreendimento.numPavimentos }}</td>
-                <td>{{ empreendimento.endereco }}</td>
-                <td>{{ empreendimento.concessionaria }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div v-else class="grade-cards">
+            <article
+              v-for="empreendimento in empreendimentos"
+              :key="empreendimento.id"
+              class="card-item"
+              :title="`${empreendimento.endereco} — ${empreendimento.concessionaria}`"
+            >
+              <div class="card-item-icone">
+                <span class="card-item-iniciais">{{ iniciais(empreendimento.nome) }}</span>
+              </div>
+
+              <strong class="card-item-nome">{{ empreendimento.nome }}</strong>
+              <span class="card-item-info">
+                {{ TIPOS[empreendimento.tipo] ?? empreendimento.tipo }} ·
+                {{ empreendimento.numPavimentos }} pav.
+              </span>
+            </article>
+          </div>
         </section>
       </template>
     </template>
@@ -176,6 +172,12 @@ import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/components/AppLayout.vue'
 import * as empresaService from '@/services/empresaService'
 import * as empreendimentoService from '@/services/empreendimentoService'
+
+const TIPOS = {
+  CASA: 'Casa',
+  PREDIO: 'Prédio',
+  GALPAO: 'Galpão',
+}
 
 const props = defineProps({
   id: { type: String, required: true },
@@ -202,12 +204,19 @@ const criando = ref(false)
 const erro = ref('')
 const sucesso = ref('')
 
-const abaAtiva = computed(() =>
-  route.query.aba === 'empreendimentos' ? 'empreendimentos' : 'dados',
-)
+const abaAtiva = computed(() => (route.query.aba === 'dados' ? 'dados' : 'empreendimentos'))
 
 function trocarAba(aba) {
   router.replace({ query: { ...route.query, aba } })
+}
+
+function iniciais(nomeEmpreendimento) {
+  return nomeEmpreendimento
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((palavra) => palavra[0].toUpperCase())
+    .join('')
 }
 
 function novoForm() {
@@ -277,11 +286,11 @@ async function handleCriar() {
 
   try {
     await empreendimentoService.criar({ ...form.value, empresaId: props.id })
-    sucesso.value = `Empreendimento "${form.value.nome}" criado com sucesso.`
+    sucesso.value = `Empreendimento "${form.value.nome}" adicionado com sucesso.`
     form.value = novoForm()
     await carregarEmpreendimentos()
   } catch (error) {
-    erro.value = error.response?.data?.mensagem ?? 'Não foi possível criar o empreendimento.'
+    erro.value = error.response?.data?.mensagem ?? 'Não foi possível adicionar o empreendimento.'
   } finally {
     criando.value = false
   }
