@@ -4,13 +4,13 @@
       <h2>Criar nova conta</h2>
       <p class="subtitle">Somente administradores podem cadastrar novos acessos.</p>
 
-      <form class="form-grid" @submit.prevent="handleCriar">
-        <div class="field">
+      <form class="form-linha" @submit.prevent="handleCriar">
+        <div class="field amplo">
           <label for="nome">Nome</label>
           <input id="nome" v-model="form.nome" type="text" required placeholder="Nome completo" />
         </div>
 
-        <div class="field">
+        <div class="field amplo">
           <label for="email">E-mail</label>
           <input
             id="email"
@@ -36,8 +36,9 @@
         <div class="field">
           <label for="perfil">Perfil</label>
           <select id="perfil" v-model="form.perfil">
-            <option value="ENGENHEIRO">Engenheiro</option>
-            <option value="ADMIN">Admin</option>
+            <option v-for="(rotulo, valor) in PERFIS" :key="valor" :value="valor">
+              {{ rotulo }}
+            </option>
           </select>
         </div>
 
@@ -81,13 +82,24 @@
               </span>
             </td>
             <td class="acoes">
-              <button class="btn-link" @click="alternarStatus(usuario)">
+              <button
+                class="btn-link"
+                :disabled="ehProprioUsuario(usuario) && usuario.ativo"
+                :title="
+                  ehProprioUsuario(usuario) && usuario.ativo
+                    ? 'Você não pode desativar a própria conta'
+                    : ''
+                "
+                @click="alternarStatus(usuario)"
+              >
                 {{ usuario.ativo ? 'Desativar' : 'Ativar' }}
               </button>
             </td>
           </tr>
         </tbody>
       </table>
+
+      <p v-if="erroStatus" class="msg erro">{{ erroStatus }}</p>
     </section>
   </AppLayout>
 </template>
@@ -96,9 +108,14 @@
 import { onMounted, ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
 import * as usuarioService from '@/services/usuarioService'
+import { PERFIS } from '@/constants/opcoes'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
 
 const usuarios = ref([])
 const carregandoLista = ref(false)
+const erroStatus = ref('')
 
 const form = ref({ nome: '', email: '', senha: '', perfil: 'ENGENHEIRO' })
 const criando = ref(false)
@@ -133,12 +150,19 @@ async function handleCriar() {
   }
 }
 
+function ehProprioUsuario(usuario) {
+  return !!authStore.email && usuario.email === authStore.email
+}
+
 async function alternarStatus(usuario) {
+  erroStatus.value = ''
+
   try {
     await usuarioService.alterarStatus(usuario.id, !usuario.ativo)
     await carregarUsuarios()
-  } catch {
-    erro.value = 'Não foi possível alterar o status do usuário.'
+  } catch (error) {
+    erroStatus.value =
+      error.response?.data?.mensagem ?? 'Não foi possível alterar o status do usuário.'
   }
 }
 

@@ -80,8 +80,8 @@ async function handleSubmit() {
   try {
     await authStore.login(email.value, senha.value)
     router.push({ name: 'home' })
-  } catch {
-    erro.value = 'E-mail ou senha inválidos.'
+  } catch (error) {
+    erro.value = error.response?.data?.mensagem ?? 'E-mail ou senha inválidos.'
   } finally {
     carregando.value = false
   }

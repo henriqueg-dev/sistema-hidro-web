@@ -304,6 +304,51 @@
   text-overflow: ellipsis;
 }
 
+.grade-calculos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+:is(.card, .login-card) button.calculo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem 1.1rem;
+  text-align: left;
+  white-space: normal;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  font-weight: 400;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+:is(.card, .login-card) button.calculo-item:hover:not(:disabled) {
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+:is(.card, .login-card) button.calculo-item.ativo {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.calculo-item strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.calculo-item span {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
 .voltar {
   display: inline-block;
   margin-bottom: 0.75rem;
@@ -356,6 +401,24 @@
   padding: 1.25rem;
   background: var(--color-primary-light);
   border-radius: 8px;
+}
+
+.painel.em-linha {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.painel.em-linha .painel-item {
+  flex: 1 1 140px;
+  min-width: 0;
+}
+
+.painel.em-linha .painel-item.estreito {
+  flex: 0 1 90px;
+}
+
+.painel.em-linha .painel-item.amplo {
+  flex: 2 1 220px;
 }
 
 .painel-item {

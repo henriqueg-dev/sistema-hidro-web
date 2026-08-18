@@ -7,3 +7,7 @@ export function criar(empreendimento) {
 export function listarPorEmpresa(empresaId) {
   return api.get(`/api/empreendimentos/empresa/${empresaId}`).then((response) => response.data)
 }
+
+export function buscarPorId(id) {
+  return api.get(`/api/empreendimentos/${id}`).then((response) => response.data)
+}

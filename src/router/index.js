@@ -27,6 +27,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/empreendimentos/:id',
+      name: 'empreendimento-detalhe',
+      component: () => import('@/views/EmpreendimentoDetalheView.vue'),
+      props: true,
+    },
+    {
       path: '/prumadas',
       name: 'prumadas',
       component: () => import('@/views/PrumadasView.vue'),

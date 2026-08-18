@@ -84,7 +84,7 @@
             <div class="field">
               <label for="tipo">Tipo</label>
               <select id="tipo" v-model="form.tipo">
-                <option v-for="(rotulo, valor) in TIPOS" :key="valor" :value="valor">
+                <option v-for="(rotulo, valor) in TIPOS_EMPREENDIMENTO" :key="valor" :value="valor">
                   {{ rotulo }}
                 </option>
               </select>
@@ -136,6 +136,7 @@
 
         <section class="card">
           <h2>Empreendimentos</h2>
+          <p class="subtitle">Clique em um empreendimento para ver seus dados e cálculos.</p>
 
           <p v-if="carregandoLista" class="subtitle">Carregando...</p>
           <p v-else-if="!empreendimentos.length" class="subtitle">
@@ -143,11 +144,12 @@
           </p>
 
           <div v-else class="grade-cards">
-            <article
+            <RouterLink
               v-for="empreendimento in empreendimentos"
               :key="empreendimento.id"
               class="card-item"
               :title="`${empreendimento.endereco} — ${empreendimento.concessionaria}`"
+              :to="{ name: 'empreendimento-detalhe', params: { id: empreendimento.id } }"
             >
               <div class="card-item-icone">
                 <span class="card-item-iniciais">{{ iniciais(empreendimento.nome) }}</span>
@@ -155,10 +157,10 @@
 
               <strong class="card-item-nome">{{ empreendimento.nome }}</strong>
               <span class="card-item-info">
-                {{ TIPOS[empreendimento.tipo] ?? empreendimento.tipo }} ·
+                {{ TIPOS_EMPREENDIMENTO[empreendimento.tipo] ?? empreendimento.tipo }} ·
                 {{ empreendimento.numPavimentos }} pav.
               </span>
-            </article>
+            </RouterLink>
           </div>
         </section>
       </template>
@@ -172,12 +174,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/components/AppLayout.vue'
 import * as empresaService from '@/services/empresaService'
 import * as empreendimentoService from '@/services/empreendimentoService'
-
-const TIPOS = {
-  CASA: 'Casa',
-  PREDIO: 'Prédio',
-  GALPAO: 'Galpão',
-}
+import { TIPOS_EMPREENDIMENTO } from '@/constants/opcoes'
 
 const props = defineProps({
   id: { type: String, required: true },

@@ -4,17 +4,18 @@
       <h2>Consultar configuração normativa</h2>
       <p class="subtitle">Informe os parâmetros para encontrar a prumada recomendada.</p>
 
-      <form class="form-grid" @submit.prevent="handleConsultar">
-        <div class="field">
+      <form class="form-linha" @submit.prevent="handleConsultar">
+        <div class="field amplo">
           <label for="tipo">Tipo</label>
           <select id="tipo" v-model="consultaForm.tipo">
-            <option value="COZINHA">Cozinha</option>
-            <option value="ARS">ARS</option>
+            <option v-for="(rotulo, valor) in TIPOS_PRUMADA" :key="valor" :value="valor">
+              {{ rotulo }}
+            </option>
           </select>
         </div>
 
-        <div class="field">
-          <label for="numPavimentos">Número de pavimentos</label>
+        <div class="field estreito">
+          <label for="numPavimentos">Pavimentos</label>
           <input
             id="numPavimentos"
             v-model.number="consultaForm.numPavimentos"
@@ -27,18 +28,18 @@
         <div class="field">
           <label for="desconector">Desconector</label>
           <select id="desconector" v-model="consultaForm.desconector">
-            <option value="50mm">50mm</option>
-            <option value="75mm">75mm</option>
+            <option v-for="(rotulo, valor) in DESCONECTORES" :key="valor" :value="valor">
+              {{ rotulo }}
+            </option>
           </select>
         </div>
 
-        <div class="field">
+        <div class="field amplo">
           <label for="condicaoSanca">Condição da sanca</label>
           <select id="condicaoSanca" v-model="consultaForm.condicaoSanca">
-            <option value="SEM_SANCA">Sem sanca</option>
-            <option value="ATE_1_2">Até 1,2m</option>
-            <option value="ENTRE_1_2_E_1_8">Entre 1,2m e 1,8m</option>
-            <option value="ACIMA_1_8">Acima de 1,8m</option>
+            <option v-for="(rotulo, valor) in CONDICOES_SANCA" :key="valor" :value="valor">
+              {{ rotulo }}
+            </option>
           </select>
         </div>
 
@@ -80,8 +81,9 @@
         <h2>Listar prumadas por tipo</h2>
         <div class="filtro-grupo">
           <select v-model="tipoLista">
-            <option value="COZINHA">Cozinha</option>
-            <option value="ARS">ARS</option>
+            <option v-for="(rotulo, valor) in TIPOS_PRUMADA" :key="valor" :value="valor">
+              {{ rotulo }}
+            </option>
           </select>
           <button type="button" @click="handleListar" :disabled="carregandoLista">
             {{ carregandoLista ? 'Buscando...' : 'Buscar' }}
@@ -120,6 +122,7 @@
 import { ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
 import * as prumadaService from '@/services/prumadaService'
+import { CONDICOES_SANCA, DESCONECTORES, TIPOS_PRUMADA } from '@/constants/opcoes'
 
 const consultaForm = ref({
   tipo: 'COZINHA',
