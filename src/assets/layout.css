@@ -1,27 +1,85 @@
 .layout {
+  --largura-menu: 240px;
   min-height: 100vh;
   background: var(--color-bg);
 }
 
-.topbar {
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 20;
+  width: var(--largura-menu);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0.85rem;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  transition: transform 0.2s ease;
+}
+
+.menu-oculto .sidebar {
+  transform: translateX(-100%);
+}
+
+.sidebar-topo {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding: 0.85rem 1.75rem;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.menu-botao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.menu-botao:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.menu-botao svg {
+  width: 20px;
+  height: 20px;
+}
+
+.menu-abrir {
+  position: fixed;
+  top: 0.85rem;
+  left: 0.85rem;
+  z-index: 20;
   background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
-  flex-wrap: wrap;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
   font-weight: 700;
   color: var(--color-primary);
   font-size: 1.05rem;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .brand-icon {
@@ -42,13 +100,13 @@
 
 .nav-links {
   display: flex;
-  gap: 0.35rem;
+  flex-direction: column;
+  gap: 0.2rem;
   flex: 1;
-  flex-wrap: wrap;
 }
 
 .nav-link {
-  padding: 0.4rem 0.8rem;
+  padding: 0.55rem 0.8rem;
   border-radius: 8px;
   color: var(--color-text-muted);
   text-decoration: none;
@@ -65,9 +123,17 @@
 
 .user-info {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.75rem;
-  margin-left: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.user-identidade {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
 }
 
 .avatar {
@@ -87,12 +153,16 @@
 .user-meta {
   display: flex;
   flex-direction: column;
+  min-width: 0;
   line-height: 1.2;
 }
 
 .user-meta strong {
   font-size: 0.88rem;
   color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-meta span {
@@ -118,9 +188,14 @@
 }
 
 .content {
-  padding: 2rem 1.75rem;
-  max-width: 1080px;
-  margin: 0 auto;
+  padding: 2rem;
+  margin-left: var(--largura-menu);
+  transition: margin-left 0.2s ease;
+}
+
+.menu-oculto .content {
+  margin-left: 0;
+  padding-left: 4rem;
 }
 
 .page-title {
@@ -232,6 +307,16 @@
 .login-card .texto-secundario {
   margin-top: 1.25rem;
   text-align: center;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    --largura-menu: 190px;
+  }
+
+  .content {
+    padding: 1.25rem;
+  }
 }
 
 @media (max-width: 720px) {

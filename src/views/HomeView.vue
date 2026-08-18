@@ -7,7 +7,8 @@
         >.
       </p>
       <p class="texto-secundario">
-        Use o menu acima para gerenciar empresas, empreendimentos e prumadas.
+        Use o menu ao lado para gerenciar empresas e prumadas. Os empreendimentos ficam dentro da
+        página de cada empresa.
       </p>
     </div>
   </AppLayout>
