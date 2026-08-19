@@ -166,6 +166,135 @@
             </div>
           </div>
         </section>
+
+        <section v-if="calculoAtivo === 'caixa-gordura'" class="card">
+          <h2>Caixa de gordura e sabão</h2>
+          <p class="subtitle">
+            Volume calculado pela população atendida (taxa de ocupação &times; número de
+            apartamentos). Até {{ MAX_CAIXAS_GORDURA }} cálculos por empreendimento.
+          </p>
+
+          <p v-if="carregandoCaixasGordura" class="subtitle">Carregando cálculos...</p>
+
+          <div v-else-if="caixasGordura.length" class="lista-calculos">
+            <article
+              v-for="(caixa, indice) in caixasGordura"
+              :key="caixa.id"
+              class="calculo-registro"
+              :class="{ 'em-edicao': caixaGorduraForm.id === caixa.id }"
+            >
+              <header>
+                <span class="badge">Cálculo {{ indice + 1 }}</span>
+
+                <span v-if="caixaGorduraParaRemover === caixa.id" class="confirmacao">
+                  <span>Remover este cálculo?</span>
+                  <button
+                    type="button"
+                    class="btn-link perigo"
+                    :disabled="removendoCaixaGordura"
+                    @click="handleRemoverCaixaGordura(caixa)"
+                  >
+                    {{ removendoCaixaGordura ? 'Removendo...' : 'Sim, remover' }}
+                  </button>
+                  <button type="button" class="btn-link" @click="caixaGorduraParaRemover = null">
+                    Cancelar
+                  </button>
+                </span>
+
+                <span v-else class="confirmacao">
+                  <button type="button" class="btn-link" @click="editarCaixaGordura(caixa)">
+                    Alterar
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-link perigo"
+                    @click="caixaGorduraParaRemover = caixa.id"
+                  >
+                    Remover
+                  </button>
+                </span>
+              </header>
+
+              <div class="calculo-corpo">
+                <div class="calculo-destaque">
+                  <span>Volume da caixa (Vc)</span>
+                  <strong>{{ caixa.volumeLitros }} L</strong>
+                  <small>{{ caixa.formula }}</small>
+                </div>
+
+                <dl class="calculo-dados">
+                  <div>
+                    <dt>Taxa de ocupação</dt>
+                    <dd>{{ caixa.taxaOcupacao }} hab/apto</dd>
+                  </div>
+                  <div>
+                    <dt>Apartamentos</dt>
+                    <dd>{{ caixa.numApartamentos }}</dd>
+                  </div>
+                  <div>
+                    <dt>População (N)</dt>
+                    <dd>{{ caixa.populacao }} hab</dd>
+                  </div>
+                </dl>
+              </div>
+            </article>
+
+            <button
+              v-if="!formCaixaGorduraAberto && podeAdicionarCaixaGordura"
+              type="button"
+              class="calculo-adicionar"
+              @click="novoCaixaGordura"
+            >
+              <strong>+ Novo cálculo</strong>
+              <span>Registre o segundo cálculo deste empreendimento.</span>
+            </button>
+          </div>
+
+          <div v-else-if="!formCaixaGorduraAberto" class="estado-vazio">
+            <strong>Nenhum cálculo registrado</strong>
+            <span
+              >Cadastre o primeiro cálculo de caixa de gordura e sabão deste empreendimento.</span
+            >
+            <button type="button" @click="novoCaixaGordura">Novo cálculo</button>
+          </div>
+
+          <div v-if="formCaixaGorduraAberto" class="form-destaque">
+            <h3>{{ tituloFormCaixaGordura }}</h3>
+
+            <form class="form-linha" @submit.prevent="handleSalvarCaixaGordura">
+              <div class="field estreito">
+                <label for="taxaOcupacao">Taxa de ocupação (hab/apto)</label>
+                <input
+                  id="taxaOcupacao"
+                  v-model.number="caixaGorduraForm.taxaOcupacao"
+                  type="number"
+                  min="1"
+                />
+              </div>
+
+              <div class="field estreito">
+                <label for="numApartamentos">Número de apartamentos</label>
+                <input
+                  id="numApartamentos"
+                  v-model.number="caixaGorduraForm.numApartamentos"
+                  type="number"
+                  min="1"
+                />
+              </div>
+
+              <div class="field actions">
+                <button type="submit" :disabled="salvandoCaixaGordura">
+                  {{ salvandoCaixaGordura ? 'Calculando...' : 'Calcular' }}
+                </button>
+                <button type="button" class="btn-secundario" @click="cancelarCaixaGordura">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <p v-if="erroCaixaGordura" class="msg erro">{{ erroCaixaGordura }}</p>
+        </section>
       </template>
     </template>
   </AppLayout>
@@ -177,6 +306,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/components/AppLayout.vue'
 import * as empreendimentoService from '@/services/empreendimentoService'
 import * as prumadaService from '@/services/prumadaService'
+import * as caixaGorduraService from '@/services/caixaGorduraService'
 import {
   CONDICOES_SANCA,
   DESCONECTORES,
@@ -190,7 +320,16 @@ const CALCULOS = [
     nome: 'Prumada de esgoto',
     descricao: 'Configuração normativa de prumada para cozinha ou área de serviço.',
   },
+  {
+    id: 'caixa-gordura',
+    nome: 'Caixa de gordura e sabão',
+    descricao: 'Volume da caixa a partir da taxa de ocupação e do número de apartamentos.',
+  },
 ]
+
+// Limite espelhado no backend (CaixaGorduraService.MAX_POR_EMPREENDIMENTO).
+const MAX_CAIXAS_GORDURA = 2
+const CAIXA_GORDURA_VAZIA = { id: null, taxaOcupacao: 4, numApartamentos: null }
 
 const props = defineProps({
   id: { type: String, required: true },
@@ -214,6 +353,23 @@ const consultando = ref(false)
 const erroPrumada = ref('')
 const resultadoPrumada = ref(null)
 
+const caixasGordura = ref([])
+const caixaGorduraForm = ref({ ...CAIXA_GORDURA_VAZIA })
+const formCaixaGorduraAberto = ref(false)
+const carregandoCaixasGordura = ref(false)
+const salvandoCaixaGordura = ref(false)
+const caixaGorduraParaRemover = ref(null)
+const removendoCaixaGordura = ref(false)
+const erroCaixaGordura = ref('')
+
+const podeAdicionarCaixaGordura = computed(() => caixasGordura.value.length < MAX_CAIXAS_GORDURA)
+
+const tituloFormCaixaGordura = computed(() => {
+  if (!caixaGorduraForm.value.id) return 'Novo cálculo'
+  const posicao = caixasGordura.value.findIndex((caixa) => caixa.id === caixaGorduraForm.value.id)
+  return `Alterando cálculo ${posicao + 1}`
+})
+
 const abaAtiva = computed(() => (route.query.aba === 'dados' ? 'dados' : 'calculos'))
 
 function trocarAba(aba) {
@@ -224,6 +380,7 @@ function selecionarCalculo(id) {
   calculoAtivo.value = calculoAtivo.value === id ? '' : id
   erroPrumada.value = ''
   resultadoPrumada.value = null
+  erroCaixaGordura.value = ''
 }
 
 async function carregarEmpreendimento() {
@@ -259,5 +416,87 @@ async function handleConsultarPrumada() {
   }
 }
 
-onMounted(carregarEmpreendimento)
+async function carregarCaixasGordura() {
+  carregandoCaixasGordura.value = true
+  try {
+    caixasGordura.value = await caixaGorduraService.listarPorEmpreendimento(props.id)
+  } catch {
+    erroCaixaGordura.value = 'Não foi possível carregar os cálculos já registrados.'
+  } finally {
+    carregandoCaixasGordura.value = false
+  }
+}
+
+function novoCaixaGordura() {
+  caixaGorduraForm.value = { ...CAIXA_GORDURA_VAZIA }
+  formCaixaGorduraAberto.value = true
+  caixaGorduraParaRemover.value = null
+  erroCaixaGordura.value = ''
+}
+
+function editarCaixaGordura(caixa) {
+  caixaGorduraForm.value = {
+    id: caixa.id,
+    taxaOcupacao: caixa.taxaOcupacao,
+    numApartamentos: caixa.numApartamentos,
+  }
+  formCaixaGorduraAberto.value = true
+  caixaGorduraParaRemover.value = null
+  erroCaixaGordura.value = ''
+}
+
+async function handleRemoverCaixaGordura(caixa) {
+  erroCaixaGordura.value = ''
+  removendoCaixaGordura.value = true
+
+  try {
+    await caixaGorduraService.excluir(caixa.id)
+    // O formulário pode estar aberto justamente sobre o cálculo removido.
+    if (caixaGorduraForm.value.id === caixa.id) {
+      cancelarCaixaGordura()
+    }
+    await carregarCaixasGordura()
+    caixaGorduraParaRemover.value = null
+  } catch (error) {
+    erroCaixaGordura.value = error.response?.data?.mensagem ?? 'Não foi possível remover o cálculo.'
+  } finally {
+    removendoCaixaGordura.value = false
+  }
+}
+
+function cancelarCaixaGordura() {
+  formCaixaGorduraAberto.value = false
+  caixaGorduraForm.value = { ...CAIXA_GORDURA_VAZIA }
+  erroCaixaGordura.value = ''
+}
+
+async function handleSalvarCaixaGordura() {
+  erroCaixaGordura.value = ''
+  salvandoCaixaGordura.value = true
+
+  const { id, taxaOcupacao, numApartamentos } = caixaGorduraForm.value
+  const dados = { empreendimentoId: Number(props.id), taxaOcupacao, numApartamentos }
+
+  try {
+    if (id) {
+      await caixaGorduraService.atualizar(id, dados)
+    } else {
+      await caixaGorduraService.criar(dados)
+    }
+    await carregarCaixasGordura()
+    cancelarCaixaGordura()
+  } catch (error) {
+    erroCaixaGordura.value =
+      error.response?.data?.mensagem ?? 'Não foi possível calcular a caixa de gordura e sabão.'
+  } finally {
+    salvandoCaixaGordura.value = false
+  }
+}
+
+onMounted(async () => {
+  await carregarEmpreendimento()
+  if (empreendimento.value) {
+    await carregarCaixasGordura()
+  }
+})
 </script>

@@ -186,6 +186,23 @@
   text-decoration: underline;
 }
 
+.btn-link.perigo,
+:is(.card, .login-card) button.btn-link.perigo {
+  color: var(--color-danger);
+}
+
+/* Ações de um item, incluindo a confirmação de remoção exibida no lugar delas. */
+.confirmacao {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.confirmacao > span {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
 :is(.card, .login-card) button.btn-secundario {
   background: var(--color-surface);
   color: var(--color-text);
@@ -419,6 +436,167 @@
 
 .painel.em-linha .painel-item.amplo {
   flex: 2 1 220px;
+}
+
+/* Cálculos já registrados de um empreendimento (ex.: caixa de gordura e sabão). */
+/* Um cálculo por linha, ocupando a largura inteira do card. */
+.lista-calculos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.calculo-registro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+/* Registro aberto para edição no formulário logo abaixo. */
+.calculo-registro.em-edicao {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.calculo-registro > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.calculo-corpo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.75rem;
+}
+
+.calculo-destaque {
+  flex: 0 1 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.85rem 1rem;
+  background: var(--color-primary-light);
+  border-radius: 8px;
+}
+
+.calculo-destaque span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+}
+
+.calculo-destaque strong {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-primary);
+}
+
+.calculo-destaque small {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.calculo-dados {
+  flex: 1 1 320px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem 1.5rem;
+  margin: 0;
+}
+
+.calculo-dados dt {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+}
+
+.calculo-dados dd {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Quadro tracejado que abre o formulário de um novo cálculo, na mesma grade dos registros. */
+:is(.card, .login-card) button.calculo-adicionar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  width: 100%;
+  padding: 1.25rem;
+  text-align: center;
+  white-space: normal;
+  background: none;
+  color: var(--color-primary);
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius);
+  font-weight: 400;
+}
+
+:is(.card, .login-card) button.calculo-adicionar:hover:not(:disabled) {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.calculo-adicionar strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.calculo-adicionar span {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+.estado-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 2.25rem 1.25rem;
+  text-align: center;
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius);
+}
+
+.estado-vazio strong {
+  font-size: 0.95rem;
+}
+
+.estado-vazio span {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.estado-vazio button {
+  margin-top: 0.75rem;
+}
+
+.form-destaque {
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+  background: var(--color-primary-light);
+  border-radius: var(--radius);
+}
+
+.form-destaque h3 {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }
 
 .painel-item {
