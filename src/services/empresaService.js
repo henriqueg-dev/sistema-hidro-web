@@ -15,3 +15,7 @@ export function buscarPorId(id) {
 export function atualizar(id, empresa) {
   return api.put(`/api/empresas/${id}`, empresa).then((response) => response.data)
 }
+
+export function excluir(id) {
+  return api.delete(`/api/empresas/${id}`).then((response) => response.data)
+}

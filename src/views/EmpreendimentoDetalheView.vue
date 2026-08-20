@@ -35,9 +35,58 @@
       </nav>
 
       <section v-if="abaAtiva === 'dados'" class="card">
-        <h2>Dados do empreendimento</h2>
+        <div class="card-header">
+          <h2>Dados do empreendimento</h2>
+          <button v-if="!editando" class="btn-link" @click="iniciarEdicao">Editar</button>
+        </div>
 
-        <div class="painel em-linha">
+        <form v-if="editando" class="form-linha" @submit.prevent="handleSalvar">
+          <div class="field amplo">
+            <label for="nomeEdicao">Nome</label>
+            <input id="nomeEdicao" v-model="form.nome" type="text" required />
+          </div>
+
+          <div class="field">
+            <label for="tipoEdicao">Tipo</label>
+            <select id="tipoEdicao" v-model="form.tipo">
+              <option v-for="(rotulo, valor) in TIPOS_EMPREENDIMENTO" :key="valor" :value="valor">
+                {{ rotulo }}
+              </option>
+            </select>
+          </div>
+
+          <div class="field estreito">
+            <label for="pavimentosEdicao">Pavimentos</label>
+            <input
+              id="pavimentosEdicao"
+              v-model.number="form.numPavimentos"
+              type="number"
+              min="1"
+              required
+            />
+          </div>
+
+          <div class="field amplo">
+            <label for="enderecoEdicao">Endereço</label>
+            <input id="enderecoEdicao" v-model="form.endereco" type="text" required />
+          </div>
+
+          <div class="field">
+            <label for="concessionariaEdicao">Concessionária</label>
+            <input id="concessionariaEdicao" v-model="form.concessionaria" type="text" required />
+          </div>
+
+          <div class="field actions">
+            <button type="submit" :disabled="salvando">
+              {{ salvando ? 'Salvando...' : 'Salvar' }}
+            </button>
+            <button type="button" class="btn-secundario" :disabled="salvando" @click="cancelarEdicao">
+              Cancelar
+            </button>
+          </div>
+        </form>
+
+        <div v-else class="painel em-linha">
           <div class="painel-item">
             <span>Nome</span>
             <strong>{{ empreendimento.nome }}</strong>
@@ -63,6 +112,9 @@
             <strong>{{ empreendimento.endereco }}</strong>
           </div>
         </div>
+
+        <p v-if="erroEdicao" class="msg erro">{{ erroEdicao }}</p>
+        <p v-if="sucessoEdicao" class="msg sucesso">{{ sucessoEdicao }}</p>
       </section>
 
       <template v-else>
@@ -342,6 +394,12 @@ const empreendimento = ref(null)
 const carregando = ref(true)
 const erroEmpreendimento = ref('')
 
+const editando = ref(false)
+const form = ref({})
+const salvando = ref(false)
+const erroEdicao = ref('')
+const sucessoEdicao = ref('')
+
 const calculoAtivo = ref('')
 
 const prumadaForm = ref({
@@ -394,6 +452,39 @@ async function carregarEmpreendimento() {
         : 'Não foi possível carregar o empreendimento.'
   } finally {
     carregando.value = false
+  }
+}
+
+function iniciarEdicao() {
+  const { nome, tipo, numPavimentos, endereco, concessionaria } = empreendimento.value
+  form.value = { nome, tipo, numPavimentos, endereco, concessionaria }
+  erroEdicao.value = ''
+  sucessoEdicao.value = ''
+  editando.value = true
+}
+
+function cancelarEdicao() {
+  editando.value = false
+  erroEdicao.value = ''
+}
+
+async function handleSalvar() {
+  erroEdicao.value = ''
+  sucessoEdicao.value = ''
+  salvando.value = true
+
+  try {
+    empreendimento.value = await empreendimentoService.atualizar(props.id, {
+      ...form.value,
+      empresaId: empreendimento.value.empresaId,
+    })
+    sucessoEdicao.value = 'Empreendimento atualizado com sucesso.'
+    editando.value = false
+  } catch (error) {
+    erroEdicao.value =
+      error.response?.data?.mensagem ?? 'Não foi possível atualizar o empreendimento.'
+  } finally {
+    salvando.value = false
   }
 }
 
@@ -495,8 +586,9 @@ async function handleSalvarCaixaGordura() {
 
 onMounted(async () => {
   await carregarEmpreendimento()
-  if (empreendimento.value) {
-    await carregarCaixasGordura()
-  }
+  if (!empreendimento.value) return
+
+  if (route.query.editar === '1') iniciarEdicao()
+  await carregarCaixasGordura()
 })
 </script>

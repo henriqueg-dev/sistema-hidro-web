@@ -24,18 +24,32 @@
       <p v-else-if="!empresas.length" class="subtitle">Nenhuma empresa cadastrada ainda.</p>
 
       <div v-else class="grade-cards">
-        <RouterLink
-          v-for="empresa in empresas"
-          :key="empresa.id"
-          class="card-item"
-          :to="{ name: 'empresa-detalhe', params: { id: empresa.id } }"
-        >
-          <div class="card-item-icone">
-            <span class="card-item-iniciais">{{ iniciais(empresa.nome) }}</span>
-          </div>
+        <div v-for="empresa in empresas" :key="empresa.id" class="card-item-box">
+          <RouterLink
+            class="card-item"
+            :to="{ name: 'empresa-detalhe', params: { id: empresa.id } }"
+          >
+            <div class="card-item-icone">
+              <span class="card-item-iniciais">{{ iniciais(empresa.nome) }}</span>
+            </div>
 
-          <strong class="card-item-nome" :title="empresa.nome">{{ empresa.nome }}</strong>
-        </RouterLink>
+            <strong class="card-item-nome" :title="empresa.nome">{{ empresa.nome }}</strong>
+          </RouterLink>
+
+          <MenuCard
+            :nome="empresa.nome"
+            aviso-exclusao="Excluir a empresa e todos os seus empreendimentos?"
+            :excluindo="excluindoId === empresa.id"
+            @editar="
+              $router.push({
+                name: 'empresa-detalhe',
+                params: { id: empresa.id },
+                query: { aba: 'dados' },
+              })
+            "
+            @excluir="handleExcluir(empresa)"
+          />
+        </div>
       </div>
     </section>
   </AppLayout>
@@ -44,10 +58,12 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
+import MenuCard from '@/components/MenuCard.vue'
 import * as empresaService from '@/services/empresaService'
 
 const empresas = ref([])
 const carregandoLista = ref(false)
+const excluindoId = ref(null)
 
 const nome = ref('')
 const criando = ref(false)
@@ -79,6 +95,22 @@ async function handleCriar() {
     erro.value = error.response?.data?.mensagem ?? 'Não foi possível adicionar a empresa.'
   } finally {
     criando.value = false
+  }
+}
+
+async function handleExcluir(empresa) {
+  erro.value = ''
+  sucesso.value = ''
+  excluindoId.value = empresa.id
+
+  try {
+    await empresaService.excluir(empresa.id)
+    sucesso.value = `Empresa "${empresa.nome}" excluída com seus empreendimentos.`
+    await carregarEmpresas()
+  } catch (error) {
+    erro.value = error.response?.data?.mensagem ?? 'Não foi possível excluir a empresa.'
+  } finally {
+    excluindoId.value = null
   }
 }
 

@@ -11,3 +11,11 @@ export function listarPorEmpresa(empresaId) {
 export function buscarPorId(id) {
   return api.get(`/api/empreendimentos/${id}`).then((response) => response.data)
 }
+
+export function excluir(id) {
+  return api.delete(`/api/empreendimentos/${id}`).then((response) => response.data)
+}
+
+export function atualizar(id, empreendimento) {
+  return api.put(`/api/empreendimentos/${id}`, empreendimento).then((response) => response.data)
+}

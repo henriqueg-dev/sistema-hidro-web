@@ -144,23 +144,41 @@
           </p>
 
           <div v-else class="grade-cards">
-            <RouterLink
+            <div
               v-for="empreendimento in empreendimentos"
               :key="empreendimento.id"
-              class="card-item"
-              :title="`${empreendimento.endereco} — ${empreendimento.concessionaria}`"
-              :to="{ name: 'empreendimento-detalhe', params: { id: empreendimento.id } }"
+              class="card-item-box"
             >
-              <div class="card-item-icone">
-                <span class="card-item-iniciais">{{ iniciais(empreendimento.nome) }}</span>
-              </div>
+              <RouterLink
+                class="card-item"
+                :title="`${empreendimento.endereco} — ${empreendimento.concessionaria}`"
+                :to="{ name: 'empreendimento-detalhe', params: { id: empreendimento.id } }"
+              >
+                <div class="card-item-icone">
+                  <span class="card-item-iniciais">{{ iniciais(empreendimento.nome) }}</span>
+                </div>
 
-              <strong class="card-item-nome">{{ empreendimento.nome }}</strong>
-              <span class="card-item-info">
-                {{ TIPOS_EMPREENDIMENTO[empreendimento.tipo] ?? empreendimento.tipo }} ·
-                {{ empreendimento.numPavimentos }} pav.
-              </span>
-            </RouterLink>
+                <strong class="card-item-nome">{{ empreendimento.nome }}</strong>
+                <span class="card-item-info">
+                  {{ TIPOS_EMPREENDIMENTO[empreendimento.tipo] ?? empreendimento.tipo }} ·
+                  {{ empreendimento.numPavimentos }} pav.
+                </span>
+              </RouterLink>
+
+              <MenuCard
+                :nome="empreendimento.nome"
+                aviso-exclusao="Excluir este empreendimento?"
+                :excluindo="excluindoId === empreendimento.id"
+                @editar="
+                  router.push({
+                    name: 'empreendimento-detalhe',
+                    params: { id: empreendimento.id },
+                    query: { aba: 'dados', editar: '1' },
+                  })
+                "
+                @excluir="handleExcluirEmpreendimento(empreendimento)"
+              />
+            </div>
           </div>
         </section>
       </template>
@@ -172,6 +190,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/components/AppLayout.vue'
+import MenuCard from '@/components/MenuCard.vue'
 import * as empresaService from '@/services/empresaService'
 import * as empreendimentoService from '@/services/empreendimentoService'
 import { TIPOS_EMPREENDIMENTO } from '@/constants/opcoes'
@@ -192,6 +211,8 @@ const nomeEditado = ref('')
 const salvando = ref(false)
 const erroEdicao = ref('')
 const sucessoEdicao = ref('')
+
+const excluindoId = ref(null)
 
 const empreendimentos = ref([])
 const carregandoLista = ref(false)
@@ -262,6 +283,22 @@ async function handleSalvar() {
     erroEdicao.value = error.response?.data?.mensagem ?? 'Não foi possível atualizar a empresa.'
   } finally {
     salvando.value = false
+  }
+}
+
+async function handleExcluirEmpreendimento(empreendimento) {
+  erro.value = ''
+  sucesso.value = ''
+  excluindoId.value = empreendimento.id
+
+  try {
+    await empreendimentoService.excluir(empreendimento.id)
+    sucesso.value = `Empreendimento "${empreendimento.nome}" excluído.`
+    await carregarEmpreendimentos()
+  } catch (error) {
+    erro.value = error.response?.data?.mensagem ?? 'Não foi possível excluir o empreendimento.'
+  } finally {
+    excluindoId.value = null
   }
 }
 
