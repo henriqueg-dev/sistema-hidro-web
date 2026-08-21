@@ -4,8 +4,8 @@ export function criar(empresa) {
   return api.post('/api/empresas', empresa).then((response) => response.data)
 }
 
-export function listarTodas() {
-  return api.get('/api/empresas').then((response) => response.data)
+export function listarTodas(busca) {
+  return api.get('/api/empresas', { params: { busca } }).then((response) => response.data)
 }
 
 export function buscarPorId(id) {

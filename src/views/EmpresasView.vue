@@ -17,10 +17,25 @@
     </section>
 
     <section class="card">
-      <h2>Empresas cadastradas</h2>
+      <div class="card-header">
+        <h2>Empresas cadastradas</h2>
+        <form class="form-busca" @submit.prevent="carregarEmpresas">
+          <input
+            v-model="busca"
+            type="search"
+            class="campo-busca"
+            placeholder="Buscar empresa..."
+            aria-label="Buscar empresa"
+          />
+          <button type="submit" :disabled="carregandoLista">Buscar</button>
+        </form>
+      </div>
       <p class="subtitle">Clique em uma empresa para ver seus dados e empreendimentos.</p>
 
       <p v-if="carregandoLista" class="subtitle">Carregando...</p>
+      <p v-else-if="!empresas.length && busca" class="subtitle">
+        Nenhuma empresa encontrada para "{{ busca }}".
+      </p>
       <p v-else-if="!empresas.length" class="subtitle">Nenhuma empresa cadastrada ainda.</p>
 
       <div v-else class="grade-cards">
@@ -64,20 +79,26 @@ import * as empresaService from '@/services/empresaService'
 const empresas = ref([])
 const carregandoLista = ref(false)
 const excluindoId = ref(null)
+const busca = ref('')
 
 const nome = ref('')
 const criando = ref(false)
 const erro = ref('')
 const sucesso = ref('')
 
+let buscaEmCurso = 0
+
 async function carregarEmpresas() {
+  const requisicao = ++buscaEmCurso
   carregandoLista.value = true
+
   try {
-    empresas.value = await empresaService.listarTodas()
+    const dados = await empresaService.listarTodas(busca.value)
+    if (requisicao === buscaEmCurso) empresas.value = dados
   } catch {
     erro.value = 'Não foi possível carregar as empresas.'
   } finally {
-    carregandoLista.value = false
+    if (requisicao === buscaEmCurso) carregandoLista.value = false
   }
 }
 

@@ -135,10 +135,25 @@
         </section>
 
         <section class="card">
-          <h2>Empreendimentos</h2>
+          <div class="card-header">
+            <h2>Empreendimentos</h2>
+            <form class="form-busca" @submit.prevent="carregarEmpreendimentos">
+              <input
+                v-model="busca"
+                type="search"
+                class="campo-busca"
+                placeholder="Buscar empreendimento..."
+                aria-label="Buscar empreendimento"
+              />
+              <button type="submit" :disabled="carregandoLista">Buscar</button>
+            </form>
+          </div>
           <p class="subtitle">Clique em um empreendimento para ver seus dados e cálculos.</p>
 
           <p v-if="carregandoLista" class="subtitle">Carregando...</p>
+          <p v-else-if="!empreendimentos.length && busca" class="subtitle">
+            Nenhum empreendimento encontrado para "{{ busca }}".
+          </p>
           <p v-else-if="!empreendimentos.length" class="subtitle">
             Nenhum empreendimento cadastrado para essa empresa.
           </p>
@@ -216,6 +231,7 @@ const excluindoId = ref(null)
 
 const empreendimentos = ref([])
 const carregandoLista = ref(false)
+const busca = ref('')
 
 const form = ref(novoForm())
 const criando = ref(false)
@@ -225,6 +241,10 @@ const sucesso = ref('')
 const abaAtiva = computed(() => (route.query.aba === 'dados' ? 'dados' : 'empreendimentos'))
 
 function trocarAba(aba) {
+  if (busca.value) {
+    busca.value = ''
+    carregarEmpreendimentos()
+  }
   router.replace({ query: { ...route.query, aba } })
 }
 
@@ -302,14 +322,19 @@ async function handleExcluirEmpreendimento(empreendimento) {
   }
 }
 
+let buscaEmCurso = 0
+
 async function carregarEmpreendimentos() {
+  const requisicao = ++buscaEmCurso
   carregandoLista.value = true
+
   try {
-    empreendimentos.value = await empreendimentoService.listarPorEmpresa(props.id)
+    const dados = await empreendimentoService.listarPorEmpresa(props.id, busca.value)
+    if (requisicao === buscaEmCurso) empreendimentos.value = dados
   } catch {
     erro.value = 'Não foi possível carregar os empreendimentos.'
   } finally {
-    carregandoLista.value = false
+    if (requisicao === buscaEmCurso) carregandoLista.value = false
   }
 }
 
