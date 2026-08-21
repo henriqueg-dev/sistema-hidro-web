@@ -1,80 +1,11 @@
 <template>
   <AppLayout title="Prumadas">
-    <section class="card">
-      <h2>Consultar configuração normativa</h2>
-      <p class="subtitle">Informe os parâmetros para encontrar a prumada recomendada.</p>
-
-      <form class="form-linha" @submit.prevent="handleConsultar">
-        <div class="field amplo">
-          <label for="tipo">Tipo</label>
-          <select id="tipo" v-model="consultaForm.tipo">
-            <option v-for="(rotulo, valor) in TIPOS_PRUMADA" :key="valor" :value="valor">
-              {{ rotulo }}
-            </option>
-          </select>
-        </div>
-
-        <div class="field estreito">
-          <label for="numPavimentos">Pavimentos</label>
-          <input
-            id="numPavimentos"
-            v-model.number="consultaForm.numPavimentos"
-            type="number"
-            min="1"
-            required
-          />
-        </div>
-
-        <div class="field">
-          <label for="desconector">Desconector</label>
-          <select id="desconector" v-model="consultaForm.desconector">
-            <option v-for="(rotulo, valor) in DESCONECTORES" :key="valor" :value="valor">
-              {{ rotulo }}
-            </option>
-          </select>
-        </div>
-
-        <div class="field amplo">
-          <label for="condicaoSanca">Condição da sanca</label>
-          <select id="condicaoSanca" v-model="consultaForm.condicaoSanca">
-            <option v-for="(rotulo, valor) in CONDICOES_SANCA" :key="valor" :value="valor">
-              {{ rotulo }}
-            </option>
-          </select>
-        </div>
-
-        <div class="field actions">
-          <button type="submit" :disabled="consultando">
-            {{ consultando ? 'Consultando...' : 'Consultar' }}
-          </button>
-        </div>
-      </form>
-
-      <p v-if="erroConsulta" class="msg erro">{{ erroConsulta }}</p>
-
-      <div v-if="resultado" class="painel">
-        <div class="painel-item">
-          <span>Tipo</span>
-          <strong>{{ resultado.tipo }}</strong>
-        </div>
-        <div class="painel-item">
-          <span>Faixa de pavimentos</span>
-          <strong>{{ resultado.numPavimentos }}</strong>
-        </div>
-        <div class="painel-item">
-          <span>Desconector</span>
-          <strong>{{ resultado.desconector }}</strong>
-        </div>
-        <div class="painel-item">
-          <span>Condição da sanca</span>
-          <strong>{{ resultado.condicaoSanca }}</strong>
-        </div>
-        <div class="painel-item full">
-          <span>Descrição</span>
-          <p>{{ resultado.descricao }}</p>
-        </div>
-      </div>
-    </section>
+    <CalculoPrumada
+      titulo="Consultar configuração normativa"
+      descricao="Informe os parâmetros para encontrar a prumada recomendada."
+      rotulo-acao="Consultar"
+      rotulo-aguardando="Consultando..."
+    />
 
     <section class="card">
       <div class="card-header">
@@ -121,40 +52,15 @@
 <script setup>
 import { ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
+import CalculoPrumada from '@/components/calculos/CalculoPrumada.vue'
 import * as prumadaService from '@/services/prumadaService'
-import { CONDICOES_SANCA, DESCONECTORES, TIPOS_PRUMADA } from '@/constants/opcoes'
-
-const consultaForm = ref({
-  tipo: 'COZINHA',
-  numPavimentos: null,
-  desconector: '50mm',
-  condicaoSanca: 'SEM_SANCA',
-})
-const consultando = ref(false)
-const erroConsulta = ref('')
-const resultado = ref(null)
+import { TIPOS_PRUMADA } from '@/constants/opcoes'
 
 const tipoLista = ref('COZINHA')
 const listaPrumadas = ref([])
 const carregandoLista = ref(false)
 const erroLista = ref('')
 const buscouLista = ref(false)
-
-async function handleConsultar() {
-  erroConsulta.value = ''
-  resultado.value = null
-  consultando.value = true
-
-  try {
-    resultado.value = await prumadaService.consultar(consultaForm.value)
-  } catch (error) {
-    erroConsulta.value =
-      error.response?.data?.mensagem ??
-      'Nenhuma configuração encontrada para os parâmetros informados.'
-  } finally {
-    consultando.value = false
-  }
-}
 
 async function handleListar() {
   erroLista.value = ''

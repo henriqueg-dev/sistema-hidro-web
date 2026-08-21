@@ -25,6 +25,12 @@ body {
   height: 100%;
 }
 
+/* Reserva a barra de rolagem: sem isso, abrir um cálculo alto estreita a página
+   e o grid de cards muda de colunas. */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   margin: 0;
   font-family:

@@ -38,6 +38,15 @@
   margin-bottom: 0;
 }
 
+/* Título com uma linha de apoio logo abaixo, ao lado das ações do card. */
+.card-header-titulo h2 {
+  margin-bottom: 0.25rem;
+}
+
+.card-header-titulo h2 + .subtitle {
+  margin-bottom: 0;
+}
+
 .form-busca {
   display: flex;
   gap: 0.5rem;
@@ -592,6 +601,27 @@
 .calculo-destaque small {
   font-size: 0.78rem;
   color: var(--color-text-muted);
+}
+
+.calculo-secoes {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.calculo-secao h4 {
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-primary);
+}
+
+.calculo-secao .calculo-corpo {
+  margin-top: 0.75rem;
 }
 
 .calculo-dados {

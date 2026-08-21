@@ -56,7 +56,7 @@
           </div>
           <div class="painel-item">
             <span>Empreendimentos</span>
-            <strong>{{ empreendimentos.length }}</strong>
+            <strong>{{ lista.itens.length }}</strong>
           </div>
         </div>
 
@@ -136,64 +136,47 @@
 
         <section class="card">
           <div class="card-header">
-            <h2>Empreendimentos</h2>
-            <form class="form-busca" @submit.prevent="carregarEmpreendimentos">
-              <input
-                v-model="busca"
-                type="search"
-                class="campo-busca"
-                placeholder="Buscar empreendimento..."
-                aria-label="Buscar empreendimento"
-              />
-              <button type="submit" :disabled="carregandoLista">Buscar</button>
-            </form>
-          </div>
-          <p class="subtitle">Clique em um empreendimento para ver seus dados e cálculos.</p>
+            <div class="card-header-titulo">
+              <h2>Empreendimentos</h2>
+              <p class="subtitle">Clique em um empreendimento para ver seus dados e cálculos.</p>
+            </div>
 
-          <p v-if="carregandoLista" class="subtitle">Carregando...</p>
-          <p v-else-if="!empreendimentos.length && busca" class="subtitle">
-            Nenhum empreendimento encontrado para "{{ busca }}".
+            <CampoBusca
+              v-model="lista.busca"
+              placeholder="Buscar empreendimento..."
+              :ocupado="lista.carregando"
+              @buscar="lista.carregar()"
+            />
+          </div>
+
+          <p v-if="lista.erro" class="msg erro">{{ lista.erro }}</p>
+          <p v-else-if="lista.carregando" class="subtitle">Carregando...</p>
+          <p v-else-if="!lista.itens.length && lista.busca" class="subtitle">
+            Nenhum empreendimento encontrado para "{{ lista.busca }}".
           </p>
-          <p v-else-if="!empreendimentos.length" class="subtitle">
+          <p v-else-if="!lista.itens.length" class="subtitle">
             Nenhum empreendimento cadastrado para essa empresa.
           </p>
 
           <div v-else class="grade-cards">
-            <div
-              v-for="empreendimento in empreendimentos"
+            <CardItem
+              v-for="empreendimento in lista.itens"
               :key="empreendimento.id"
-              class="card-item-box"
-            >
-              <RouterLink
-                class="card-item"
-                :title="`${empreendimento.endereco} — ${empreendimento.concessionaria}`"
-                :to="{ name: 'empreendimento-detalhe', params: { id: empreendimento.id } }"
-              >
-                <div class="card-item-icone">
-                  <span class="card-item-iniciais">{{ iniciais(empreendimento.nome) }}</span>
-                </div>
-
-                <strong class="card-item-nome">{{ empreendimento.nome }}</strong>
-                <span class="card-item-info">
-                  {{ TIPOS_EMPREENDIMENTO[empreendimento.tipo] ?? empreendimento.tipo }} ·
-                  {{ empreendimento.numPavimentos }} pav.
-                </span>
-              </RouterLink>
-
-              <MenuCard
-                :nome="empreendimento.nome"
-                aviso-exclusao="Excluir este empreendimento?"
-                :excluindo="excluindoId === empreendimento.id"
-                @editar="
-                  router.push({
-                    name: 'empreendimento-detalhe',
-                    params: { id: empreendimento.id },
-                    query: { aba: 'dados', editar: '1' },
-                  })
-                "
-                @excluir="handleExcluirEmpreendimento(empreendimento)"
-              />
-            </div>
+              :nome="empreendimento.nome"
+              :titulo="`${empreendimento.endereco} — ${empreendimento.concessionaria}`"
+              :info="`${TIPOS_EMPREENDIMENTO[empreendimento.tipo] ?? empreendimento.tipo} · ${empreendimento.numPavimentos} pav.`"
+              :to="{ name: 'empreendimento-detalhe', params: { id: empreendimento.id } }"
+              aviso-exclusao="Excluir este empreendimento?"
+              :excluindo="excluindoId === empreendimento.id"
+              @editar="
+                router.push({
+                  name: 'empreendimento-detalhe',
+                  params: { id: empreendimento.id },
+                  query: { aba: 'dados', editar: '1' },
+                })
+              "
+              @excluir="handleExcluirEmpreendimento(empreendimento)"
+            />
           </div>
         </section>
       </template>
@@ -205,7 +188,9 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/components/AppLayout.vue'
-import MenuCard from '@/components/MenuCard.vue'
+import CampoBusca from '@/components/CampoBusca.vue'
+import CardItem from '@/components/CardItem.vue'
+import { useListaBuscavel } from '@/composables/useListaBuscavel'
 import * as empresaService from '@/services/empresaService'
 import * as empreendimentoService from '@/services/empreendimentoService'
 import { TIPOS_EMPREENDIMENTO } from '@/constants/opcoes'
@@ -229,9 +214,10 @@ const sucessoEdicao = ref('')
 
 const excluindoId = ref(null)
 
-const empreendimentos = ref([])
-const carregandoLista = ref(false)
-const busca = ref('')
+const lista = useListaBuscavel(
+  (termo) => empreendimentoService.listarPorEmpresa(props.id, termo),
+  'Não foi possível carregar os empreendimentos.',
+)
 
 const form = ref(novoForm())
 const criando = ref(false)
@@ -241,20 +227,8 @@ const sucesso = ref('')
 const abaAtiva = computed(() => (route.query.aba === 'dados' ? 'dados' : 'empreendimentos'))
 
 function trocarAba(aba) {
-  if (busca.value) {
-    busca.value = ''
-    carregarEmpreendimentos()
-  }
+  lista.limparBusca()
   router.replace({ query: { ...route.query, aba } })
-}
-
-function iniciais(nomeEmpreendimento) {
-  return nomeEmpreendimento
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((palavra) => palavra[0].toUpperCase())
-    .join('')
 }
 
 function novoForm() {
@@ -314,27 +288,11 @@ async function handleExcluirEmpreendimento(empreendimento) {
   try {
     await empreendimentoService.excluir(empreendimento.id)
     sucesso.value = `Empreendimento "${empreendimento.nome}" excluído.`
-    await carregarEmpreendimentos()
+    await lista.carregar()
   } catch (error) {
     erro.value = error.response?.data?.mensagem ?? 'Não foi possível excluir o empreendimento.'
   } finally {
     excluindoId.value = null
-  }
-}
-
-let buscaEmCurso = 0
-
-async function carregarEmpreendimentos() {
-  const requisicao = ++buscaEmCurso
-  carregandoLista.value = true
-
-  try {
-    const dados = await empreendimentoService.listarPorEmpresa(props.id, busca.value)
-    if (requisicao === buscaEmCurso) empreendimentos.value = dados
-  } catch {
-    erro.value = 'Não foi possível carregar os empreendimentos.'
-  } finally {
-    if (requisicao === buscaEmCurso) carregandoLista.value = false
   }
 }
 
@@ -347,7 +305,7 @@ async function handleCriar() {
     await empreendimentoService.criar({ ...form.value, empresaId: props.id })
     sucesso.value = `Empreendimento "${form.value.nome}" adicionado com sucesso.`
     form.value = novoForm()
-    await carregarEmpreendimentos()
+    await lista.carregar()
   } catch (error) {
     erro.value = error.response?.data?.mensagem ?? 'Não foi possível adicionar o empreendimento.'
   } finally {
@@ -357,6 +315,6 @@ async function handleCriar() {
 
 onMounted(() => {
   carregarEmpresa()
-  carregarEmpreendimentos()
+  lista.carregar()
 })
 </script>
