@@ -3,16 +3,11 @@
     <div class="login-panel">
       <section class="brand-side">
         <div class="brand-content">
-          <div class="brand-logo">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M12 2C12 2 5 10.5 5 15.5C5 19.6421 8.35786 23 12.5 23C16.6421 23 20 19.6421 20 15.5C20 10.9 15 4.8 12 2Z"
-                fill="white"
-                fill-opacity="0.9"
-              />
-            </svg>
-          </div>
-          <h1>Sistema Hidro</h1>
+          <img
+            class="brand-logo"
+            src="@/assets/hidros-negativo.png"
+            alt="Hidros — Cálculos hidráulicos"
+          />
           <p>
             Cálculos hidráulicos prediais com precisão normativa, do jeito que o seu escritório
             precisa.

@@ -1,5 +1,5 @@
 <template>
-  <AppLayout title="Assistente técnico">
+  <AppLayout title="Assistente IA">
     <p v-if="!configurado && !carregandoStatus" class="msg erro">
       A chave da API do Claude não está configurada no servidor. Defina a variável de ambiente
       ANTHROPIC_API_KEY e reinicie a aplicação.

@@ -3,15 +3,8 @@
     <aside class="sidebar">
       <div class="sidebar-topo">
         <RouterLink to="/" class="brand">
-          <div class="brand-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M12 2C12 2 5 10.5 5 15.5C5 19.6421 8.35786 23 12.5 23C16.6421 23 20 19.6421 20 15.5C20 10.9 15 4.8 12 2Z"
-                fill="white"
-              />
-            </svg>
-          </div>
-          <span>Sistema Hidro</span>
+          <img class="brand-icon" src="@/assets/hidros-icone-app.png" alt="" />
+          <span>Hidros</span>
         </RouterLink>
 
         <button
@@ -36,7 +29,7 @@
       <nav class="nav-links">
         <RouterLink to="/empresas" class="nav-link">Empresas</RouterLink>
         <RouterLink to="/prumadas" class="nav-link">Prumadas</RouterLink>
-        <RouterLink to="/assistente" class="nav-link">Assistente</RouterLink>
+        <RouterLink to="/assistente" class="nav-link">Assistente IA</RouterLink>
         <RouterLink v-if="authStore.perfil === 'ADMIN'" to="/usuarios" class="nav-link">
           Usuários
         </RouterLink>
