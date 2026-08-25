@@ -30,8 +30,8 @@
         <RouterLink to="/empresas" class="nav-link">Empresas</RouterLink>
         <RouterLink to="/prumadas" class="nav-link">Prumadas</RouterLink>
         <RouterLink to="/assistente" class="nav-link">Assistente IA</RouterLink>
-        <RouterLink v-if="authStore.perfil === 'ADMIN'" to="/usuarios" class="nav-link">
-          Usuários
+        <RouterLink to="/usuarios" class="nav-link">
+          {{ authStore.perfil === 'ADMIN' ? 'Usuários' : 'Minha conta' }}
         </RouterLink>
       </nav>
 

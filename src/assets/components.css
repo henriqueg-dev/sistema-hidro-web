@@ -12,6 +12,11 @@
   margin-bottom: 1rem;
 }
 
+/* Segundo bloco dentro de um mesmo card. */
+.card h2.titulo-secundario {
+  margin-top: 1.75rem;
+}
+
 .card h2:has(+ .subtitle) {
   margin-bottom: 0.25rem;
 }
