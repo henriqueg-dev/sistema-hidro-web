@@ -33,6 +33,11 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/assistente',
+      name: 'assistente',
+      component: () => import('@/views/AssistenteView.vue'),
+    },
+    {
       path: '/prumadas',
       name: 'prumadas',
       component: () => import('@/views/PrumadasView.vue'),
