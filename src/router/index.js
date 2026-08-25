@@ -35,7 +35,7 @@ const router = createRouter({
     {
       path: '/assistente',
       name: 'assistente',
-      component: () => import('@/views/AssistenteView.vue'),
+      component: () => import('@/assistente/views/AssistenteView.vue'),
     },
     {
       path: '/prumadas',

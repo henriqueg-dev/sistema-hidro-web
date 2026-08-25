@@ -123,7 +123,7 @@
 <script setup>
 import { nextTick, onMounted, ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
-import * as assistenteService from '@/services/assistenteService'
+import * as assistenteService from '@/assistente/services/assistenteService'
 import * as empresaService from '@/services/empresaService'
 import * as empreendimentoService from '@/services/empreendimentoService'
 
