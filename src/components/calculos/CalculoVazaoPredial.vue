@@ -4,6 +4,7 @@
     <p class="subtitle">
       Demanda a partir da população (taxa de ocupação &times; apartamentos) e do consumo per capita.
       Coeficientes fixos: K1 = 1,2 (dia de maior consumo) e K2 = 1,5 (hora de maior consumo).
+      A reserva é repartida em 60% no reservatório inferior e 40% no superior.
     </p>
 
     <ListaCalculos
@@ -40,6 +41,20 @@
               <div>
                 <dt>Vc = Q &times; Tx. Ocup. &times; Nº Aparta &times; Cap. Equiv.</dt>
                 <dd>{{ fmt(item.volumeCaixaM3, 2) }} m³</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="calculo-secao">
+            <h4>Divisão da reservação</h4>
+            <dl class="calculo-dados">
+              <div>
+                <dt>Vinf = Vc &times; {{ fmt(item.fracaoInferior * 100, 0) }}% — reservatório inferior</dt>
+                <dd>{{ fmt(item.volumeInferiorM3, 2) }} m³</dd>
+              </div>
+              <div>
+                <dt>Vsup = Vc &times; {{ fmt(item.fracaoSuperior * 100, 0) }}% — reservatório superior</dt>
+                <dd>{{ fmt(item.volumeSuperiorM3, 2) }} m³</dd>
               </div>
             </dl>
           </div>
