@@ -160,6 +160,7 @@ import AppLayout from '@/components/AppLayout.vue'
 import CalculoPrumada from '@/components/calculos/CalculoPrumada.vue'
 import CalculoCaixaGordura from '@/components/calculos/CalculoCaixaGordura.vue'
 import CalculoVazaoPredial from '@/components/calculos/CalculoVazaoPredial.vue'
+import CalculoTanqueSeptico from '@/components/calculos/CalculoTanqueSeptico.vue'
 import * as empreendimentoService from '@/services/empreendimentoService'
 import { TIPOS_EMPREENDIMENTO } from '@/constants/opcoes'
 
@@ -181,6 +182,12 @@ const CALCULOS = [
     nome: 'Vazão predial',
     descricao: 'Demanda média, máxima diária e máxima horária, com o volume da caixa d’água.',
     componente: CalculoVazaoPredial,
+  },
+  {
+    id: 'tanque-septico',
+    nome: 'Tanque séptico',
+    descricao: 'Volume útil e dimensões internas, a partir das unidades de contribuição.',
+    componente: CalculoTanqueSeptico,
   },
 ]
 

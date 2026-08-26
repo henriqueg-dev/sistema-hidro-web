@@ -250,6 +250,13 @@
   background: var(--color-danger-light);
 }
 
+/* Resultado válido que exigiu um ajuste normativo — nem erro, nem confirmação. */
+.msg.aviso {
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+}
+
 .msg.sucesso {
   color: var(--color-success);
   background: #f0fdf4;
@@ -606,6 +613,91 @@
 .calculo-destaque small {
   font-size: 0.78rem;
   color: var(--color-text-muted);
+}
+
+/* Coluna de resultado: o valor principal e, abaixo dele, o detalhamento que o acompanha. */
+.calculo-coluna {
+  flex: 0 1 280px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.calculo-corpo > .calculo-secoes {
+  flex: 1 1 320px;
+}
+
+/* O destaque nasce com flex-basis de 240px pensando na linha do card, onde isso é largura.
+   Nesta coluna o eixo principal é vertical, e a mesma base viraria altura do quadro. */
+.calculo-coluna .calculo-destaque {
+  flex: 0 0 auto;
+}
+
+.calculo-geometria {
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.calculo-geometria h5 {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-primary);
+}
+
+.calculo-geometria dl {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.calculo-geometria dt {
+  font-size: 0.7rem;
+  line-height: 1.3;
+  color: var(--color-text-muted);
+}
+
+.calculo-geometria dd {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.calculo-geometria dd small {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--color-text-muted);
+}
+
+.calculo-nota {
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+/* Marcador de dica ao lado de um rótulo; o texto vem do title, no tooltip do navegador. */
+.dica {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-left: 0.3rem;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
 }
 
 .calculo-secoes {
