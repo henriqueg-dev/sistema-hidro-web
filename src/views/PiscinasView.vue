@@ -96,7 +96,11 @@
             <dt>Bocais de retorno</dt>
             <dd>
               {{ piscina.numBocaisRetornoAdotado }}
-              <small>calc. {{ formatar(piscina.numBocaisRetornoCalculado, 2) }}</small>
+              <small>
+                calc. {{ formatar(piscina.numBocaisRetornoCalculado, 2) }} — vazão
+                {{ formatar(piscina.numBocaisPorVazao, 2) }} · área
+                {{ formatar(piscina.numBocaisPorArea, 2) }}
+              </small>
             </dd>
           </div>
           <div>
