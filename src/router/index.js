@@ -16,14 +16,14 @@ const router = createRouter({
       component: () => import('@/views/HomeView.vue'),
     },
     {
-      path: '/empresas',
-      name: 'empresas',
-      component: () => import('@/views/EmpresasView.vue'),
+      path: '/clientes',
+      name: 'clientes',
+      component: () => import('@/views/ClientesView.vue'),
     },
     {
-      path: '/empresas/:id',
-      name: 'empresa-detalhe',
-      component: () => import('@/views/EmpresaDetalheView.vue'),
+      path: '/clientes/:id',
+      name: 'cliente-detalhe',
+      component: () => import('@/views/ClienteDetalheView.vue'),
       props: true,
     },
     {

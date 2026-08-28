@@ -1,14 +1,14 @@
 <template>
-  <AppLayout title="Empresas">
+  <AppLayout title="Clientes">
     <section class="card">
-      <h2>Adicionar empresa</h2>
+      <h2>Adicionar cliente</h2>
       <form class="form-row" @submit.prevent="handleCriar">
         <div class="field">
-          <label for="nome">Nome da empresa</label>
+          <label for="nome">Nome do cliente</label>
           <input id="nome" v-model="nome" type="text" required placeholder="Ex: Construtora Alfa" />
         </div>
         <button type="submit" :disabled="criando">
-          {{ criando ? 'Adicionando...' : 'Adicionar empresa' }}
+          {{ criando ? 'Adicionando...' : 'Adicionar cliente' }}
         </button>
       </form>
 
@@ -19,13 +19,13 @@
     <section class="card">
       <div class="card-header">
         <div class="card-header-titulo">
-          <h2>Empresas cadastradas</h2>
-          <p class="subtitle">Clique em uma empresa para ver seus dados e empreendimentos.</p>
+          <h2>Clientes cadastrados</h2>
+          <p class="subtitle">Clique em um cliente para ver seus dados e empreendimentos.</p>
         </div>
 
         <CampoBusca
           v-model="lista.busca"
-          placeholder="Buscar empresa..."
+          placeholder="Buscar cliente..."
           :ocupado="lista.carregando"
           @buscar="lista.carregar()"
         />
@@ -34,26 +34,26 @@
       <p v-if="lista.erro" class="msg erro">{{ lista.erro }}</p>
       <p v-else-if="lista.carregando" class="subtitle">Carregando...</p>
       <p v-else-if="!lista.itens.length && lista.busca" class="subtitle">
-        Nenhuma empresa encontrada para "{{ lista.busca }}".
+        Nenhum cliente encontrada para "{{ lista.busca }}".
       </p>
-      <p v-else-if="!lista.itens.length" class="subtitle">Nenhuma empresa cadastrada ainda.</p>
+      <p v-else-if="!lista.itens.length" class="subtitle">Nenhum cliente cadastrada ainda.</p>
 
       <div v-else class="grade-cards">
         <CardItem
-          v-for="empresa in lista.itens"
-          :key="empresa.id"
-          :nome="empresa.nome"
-          :to="{ name: 'empresa-detalhe', params: { id: empresa.id } }"
-          aviso-exclusao="Excluir a empresa e todos os seus empreendimentos?"
-          :excluindo="excluindoId === empresa.id"
+          v-for="cliente in lista.itens"
+          :key="cliente.id"
+          :nome="cliente.nome"
+          :to="{ name: 'cliente-detalhe', params: { id: cliente.id } }"
+          aviso-exclusao="Excluir o cliente e todos os seus empreendimentos?"
+          :excluindo="excluindoId === cliente.id"
           @editar="
             $router.push({
-              name: 'empresa-detalhe',
-              params: { id: empresa.id },
+              name: 'cliente-detalhe',
+              params: { id: cliente.id },
               query: { aba: 'dados' },
             })
           "
-          @excluir="handleExcluir(empresa)"
+          @excluir="handleExcluir(cliente)"
         />
       </div>
     </section>
@@ -66,11 +66,11 @@ import AppLayout from '@/components/AppLayout.vue'
 import CampoBusca from '@/components/CampoBusca.vue'
 import CardItem from '@/components/CardItem.vue'
 import { useListaBuscavel } from '@/composables/useListaBuscavel'
-import * as empresaService from '@/services/empresaService'
+import * as clienteService from '@/services/clienteService'
 
 const lista = useListaBuscavel(
-  (termo) => empresaService.listarTodas(termo),
-  'Não foi possível carregar as empresas.',
+  (termo) => clienteService.listarTodos(termo),
+  'Não foi possível carregar os clientes.',
 )
 
 const excluindoId = ref(null)
@@ -86,28 +86,28 @@ async function handleCriar() {
   criando.value = true
 
   try {
-    await empresaService.criar({ nome: nome.value })
-    sucesso.value = `Empresa "${nome.value}" adicionada com sucesso.`
+    await clienteService.criar({ nome: nome.value })
+    sucesso.value = `Cliente "${nome.value}" adicionado com sucesso.`
     nome.value = ''
     await lista.carregar()
   } catch (error) {
-    erro.value = error.response?.data?.mensagem ?? 'Não foi possível adicionar a empresa.'
+    erro.value = error.response?.data?.mensagem ?? 'Não foi possível adicionar o cliente.'
   } finally {
     criando.value = false
   }
 }
 
-async function handleExcluir(empresa) {
+async function handleExcluir(cliente) {
   erro.value = ''
   sucesso.value = ''
-  excluindoId.value = empresa.id
+  excluindoId.value = cliente.id
 
   try {
-    await empresaService.excluir(empresa.id)
-    sucesso.value = `Empresa "${empresa.nome}" excluída com seus empreendimentos.`
+    await clienteService.excluir(cliente.id)
+    sucesso.value = `Cliente "${cliente.nome}" excluída com seus empreendimentos.`
     await lista.carregar()
   } catch (error) {
-    erro.value = error.response?.data?.mensagem ?? 'Não foi possível excluir a empresa.'
+    erro.value = error.response?.data?.mensagem ?? 'Não foi possível excluir o cliente.'
   } finally {
     excluindoId.value = null
   }

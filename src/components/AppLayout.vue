@@ -27,7 +27,7 @@
       </div>
 
       <nav class="nav-links">
-        <RouterLink to="/empresas" class="nav-link">Empresas</RouterLink>
+        <RouterLink to="/clientes" class="nav-link">Clientes</RouterLink>
         <RouterLink to="/prumadas" class="nav-link">Prumadas</RouterLink>
         <RouterLink to="/assistente" class="nav-link">Assistente IA</RouterLink>
         <RouterLink to="/usuarios" class="nav-link">

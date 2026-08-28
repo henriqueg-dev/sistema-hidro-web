@@ -4,9 +4,9 @@ export function criar(empreendimento) {
   return api.post('/api/empreendimentos', empreendimento).then((response) => response.data)
 }
 
-export function listarPorEmpresa(empresaId, busca) {
+export function listarPorCliente(clienteId, busca) {
   return api
-    .get(`/api/empreendimentos/empresa/${empresaId}`, { params: { busca } })
+    .get(`/api/empreendimentos/cliente/${clienteId}`, { params: { busca } })
     .then((response) => response.data)
 }
 

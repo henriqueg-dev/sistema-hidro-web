@@ -58,11 +58,11 @@
 
           <div class="form-linha">
             <div class="field">
-              <label for="empresa">Empresa (opcional)</label>
-              <select id="empresa" v-model="empresaSelecionada" @change="carregarEmpreendimentos">
+              <label for="cliente">Cliente (opcional)</label>
+              <select id="cliente" v-model="clienteSelecionado" @change="carregarEmpreendimentos">
                 <option :value="null">Sem contexto de projeto</option>
-                <option v-for="empresa in empresas" :key="empresa.id" :value="empresa.id">
-                  {{ empresa.nome }}
+                <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
+                  {{ cliente.nome }}
                 </option>
               </select>
             </div>
@@ -72,7 +72,7 @@
               <select
                 id="empreendimento"
                 v-model="empreendimentoSelecionado"
-                :disabled="!empresaSelecionada"
+                :disabled="!clienteSelecionado"
               >
                 <option :value="null">Nenhum</option>
                 <option v-for="item in empreendimentos" :key="item.id" :value="item.id">
@@ -124,7 +124,7 @@
 import { nextTick, onMounted, ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
 import * as assistenteService from '@/assistente/services/assistenteService'
-import * as empresaService from '@/services/empresaService'
+import * as clienteService from '@/services/clienteService'
 import * as empreendimentoService from '@/services/empreendimentoService'
 
 const conversas = ref([])
@@ -137,9 +137,9 @@ const carregandoConversas = ref(false)
 const enviando = ref(false)
 const configurado = ref(true)
 
-const empresas = ref([])
+const clientes = ref([])
 const empreendimentos = ref([])
-const empresaSelecionada = ref(null)
+const clienteSelecionado = ref(null)
 const empreendimentoSelecionado = ref(null)
 
 const painelMensagens = ref(null)
@@ -174,12 +174,12 @@ async function carregarConversas() {
   }
 }
 
-async function carregarEmpresas() {
+async function carregarClientes() {
   try {
-    empresas.value = await empresaService.listarTodas()
+    clientes.value = await clienteService.listarTodos()
   } catch {
     // Sem a lista o assistente segue funcionando, apenas sem contexto de projeto.
-    empresas.value = []
+    clientes.value = []
   }
 }
 
@@ -187,10 +187,10 @@ async function carregarEmpreendimentos() {
   empreendimentoSelecionado.value = null
   empreendimentos.value = []
 
-  if (!empresaSelecionada.value) return
+  if (!clienteSelecionado.value) return
 
   try {
-    empreendimentos.value = await empreendimentoService.listarPorEmpresa(empresaSelecionada.value)
+    empreendimentos.value = await empreendimentoService.listarPorCliente(clienteSelecionado.value)
   } catch {
     empreendimentos.value = []
   }
@@ -200,7 +200,7 @@ function iniciarNovaConversa() {
   conversaAtual.value = null
   pergunta.value = ''
   erro.value = ''
-  empresaSelecionada.value = null
+  clienteSelecionado.value = null
   empreendimentoSelecionado.value = null
   empreendimentos.value = []
 }
@@ -274,6 +274,6 @@ async function handleExcluirConversa(conversa) {
 }
 
 onMounted(async () => {
-  await Promise.all([carregarStatus(), carregarConversas(), carregarEmpresas()])
+  await Promise.all([carregarStatus(), carregarConversas(), carregarClientes()])
 })
 </script>

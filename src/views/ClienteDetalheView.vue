@@ -1,10 +1,10 @@
 <template>
   <AppLayout>
-    <RouterLink to="/empresas" class="voltar">&larr; Empresas</RouterLink>
+    <RouterLink to="/clientes" class="voltar">&larr; Clientes</RouterLink>
 
-    <h1 class="page-title">{{ empresa?.nome ?? 'Empresa' }}</h1>
+    <h1 class="page-title">{{ cliente?.nome ?? 'Cliente' }}</h1>
 
-    <p v-if="erroEmpresa" class="msg erro">{{ erroEmpresa }}</p>
+    <p v-if="erroCliente" class="msg erro">{{ erroCliente }}</p>
 
     <template v-else>
       <nav class="abas">
@@ -28,18 +28,18 @@
 
       <section v-if="abaAtiva === 'dados'" class="card">
         <div class="card-header">
-          <h2>Dados da empresa</h2>
-          <button v-if="!carregandoEmpresa && !editando" class="btn-link" @click="iniciarEdicao">
+          <h2>Dados do cliente</h2>
+          <button v-if="!carregandoCliente && !editando" class="btn-link" @click="iniciarEdicao">
             Editar
           </button>
         </div>
 
-        <p v-if="carregandoEmpresa" class="subtitle">Carregando...</p>
+        <p v-if="carregandoCliente" class="subtitle">Carregando...</p>
 
         <form v-else-if="editando" class="form-row" @submit.prevent="handleSalvar">
           <div class="field">
-            <label for="nomeEmpresa">Nome da empresa</label>
-            <input id="nomeEmpresa" v-model="nomeEditado" type="text" required />
+            <label for="nomeCliente">Nome do cliente</label>
+            <input id="nomeCliente" v-model="nomeEditado" type="text" required />
           </div>
           <button type="submit" :disabled="salvando">
             {{ salvando ? 'Salvando...' : 'Salvar' }}
@@ -52,7 +52,7 @@
         <div v-else class="painel">
           <div class="painel-item">
             <span>Nome</span>
-            <strong>{{ empresa?.nome }}</strong>
+            <strong>{{ cliente?.nome }}</strong>
           </div>
           <div class="painel-item">
             <span>Empreendimentos</span>
@@ -67,7 +67,7 @@
       <template v-else>
         <section class="card">
           <h2>Adicionar empreendimento</h2>
-          <p class="subtitle">Será vinculado a {{ empresa?.nome }}.</p>
+          <p class="subtitle">Será vinculado a {{ cliente?.nome }}.</p>
 
           <form class="form-linha" @submit.prevent="handleCriar">
             <div class="field amplo">
@@ -155,7 +155,7 @@
             Nenhum empreendimento encontrado para "{{ lista.busca }}".
           </p>
           <p v-else-if="!lista.itens.length" class="subtitle">
-            Nenhum empreendimento cadastrado para essa empresa.
+            Nenhum empreendimento cadastrado para esse cliente.
           </p>
 
           <div v-else class="grade-cards">
@@ -191,7 +191,7 @@ import AppLayout from '@/components/AppLayout.vue'
 import CampoBusca from '@/components/CampoBusca.vue'
 import CardItem from '@/components/CardItem.vue'
 import { useListaBuscavel } from '@/composables/useListaBuscavel'
-import * as empresaService from '@/services/empresaService'
+import * as clienteService from '@/services/clienteService'
 import * as empreendimentoService from '@/services/empreendimentoService'
 import { TIPOS_EMPREENDIMENTO } from '@/constants/opcoes'
 
@@ -202,9 +202,9 @@ const props = defineProps({
 const route = useRoute()
 const router = useRouter()
 
-const empresa = ref(null)
-const carregandoEmpresa = ref(false)
-const erroEmpresa = ref('')
+const cliente = ref(null)
+const carregandoCliente = ref(false)
+const erroCliente = ref('')
 
 const editando = ref(false)
 const nomeEditado = ref('')
@@ -215,7 +215,7 @@ const sucessoEdicao = ref('')
 const excluindoId = ref(null)
 
 const lista = useListaBuscavel(
-  (termo) => empreendimentoService.listarPorEmpresa(props.id, termo),
+  (termo) => empreendimentoService.listarPorCliente(props.id, termo),
   'Não foi possível carregar os empreendimentos.',
 )
 
@@ -241,19 +241,19 @@ function novoForm() {
   }
 }
 
-async function carregarEmpresa() {
-  carregandoEmpresa.value = true
+async function carregarCliente() {
+  carregandoCliente.value = true
   try {
-    empresa.value = await empresaService.buscarPorId(props.id)
+    cliente.value = await clienteService.buscarPorId(props.id)
   } catch {
-    erroEmpresa.value = 'Não foi possível carregar a empresa.'
+    erroCliente.value = 'Não foi possível carregar o cliente.'
   } finally {
-    carregandoEmpresa.value = false
+    carregandoCliente.value = false
   }
 }
 
 function iniciarEdicao() {
-  nomeEditado.value = empresa.value?.nome ?? ''
+  nomeEditado.value = cliente.value?.nome ?? ''
   erroEdicao.value = ''
   sucessoEdicao.value = ''
   editando.value = true
@@ -270,11 +270,11 @@ async function handleSalvar() {
   salvando.value = true
 
   try {
-    empresa.value = await empresaService.atualizar(props.id, { nome: nomeEditado.value })
-    sucessoEdicao.value = 'Empresa atualizada com sucesso.'
+    cliente.value = await clienteService.atualizar(props.id, { nome: nomeEditado.value })
+    sucessoEdicao.value = 'Cliente atualizada com sucesso.'
     editando.value = false
   } catch (error) {
-    erroEdicao.value = error.response?.data?.mensagem ?? 'Não foi possível atualizar a empresa.'
+    erroEdicao.value = error.response?.data?.mensagem ?? 'Não foi possível atualizar o cliente.'
   } finally {
     salvando.value = false
   }
@@ -302,7 +302,7 @@ async function handleCriar() {
   criando.value = true
 
   try {
-    await empreendimentoService.criar({ ...form.value, empresaId: props.id })
+    await empreendimentoService.criar({ ...form.value, clienteId: props.id })
     sucesso.value = `Empreendimento "${form.value.nome}" adicionado com sucesso.`
     form.value = novoForm()
     await lista.carregar()
@@ -314,7 +314,7 @@ async function handleCriar() {
 }
 
 onMounted(() => {
-  carregarEmpresa()
+  carregarCliente()
   lista.carregar()
 })
 </script>

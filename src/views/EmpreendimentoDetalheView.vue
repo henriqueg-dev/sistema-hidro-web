@@ -3,11 +3,11 @@
     <RouterLink
       v-if="empreendimento"
       class="voltar"
-      :to="{ name: 'empresa-detalhe', params: { id: empreendimento.empresaId } }"
+      :to="{ name: 'cliente-detalhe', params: { id: empreendimento.clienteId } }"
     >
-      &larr; {{ empreendimento.empresaNome }}
+      &larr; {{ empreendimento.clienteNome }}
     </RouterLink>
-    <RouterLink v-else class="voltar" to="/empresas">&larr; Empresas</RouterLink>
+    <RouterLink v-else class="voltar" to="/clientes">&larr; Clientes</RouterLink>
 
     <h1 class="page-title">{{ empreendimento?.nome ?? 'Empreendimento' }}</h1>
 
@@ -109,8 +109,8 @@
             <strong>{{ empreendimento.concessionaria }}</strong>
           </div>
           <div class="painel-item">
-            <span>Empresa</span>
-            <strong>{{ empreendimento.empresaNome }}</strong>
+            <span>Cliente</span>
+            <strong>{{ empreendimento.clienteNome }}</strong>
           </div>
           <div class="painel-item amplo">
             <span>Endereço</span>
@@ -274,7 +274,7 @@ async function handleSalvar() {
   try {
     empreendimento.value = await empreendimentoService.atualizar(props.id, {
       ...form.value,
-      empresaId: empreendimento.value.empresaId,
+      clienteId: empreendimento.value.clienteId,
     })
     sucessoEdicao.value = 'Empreendimento atualizado com sucesso.'
     editando.value = false
