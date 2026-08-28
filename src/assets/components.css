@@ -1006,7 +1006,7 @@ button.btn.acao-solta {
   color: var(--color-text-muted);
 }
 
-/* A resposta vem em markdown; pre-wrap preserva quebras e listas sem interpretar HTML. */
+/* A resposta é exibida como texto puro; pre-wrap preserva as quebras de linha. */
 .mensagem p {
   font-size: 0.9rem;
   line-height: 1.5;
