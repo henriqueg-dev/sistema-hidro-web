@@ -33,6 +33,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/empreendimentos/:id/piscinas',
+      name: 'piscinas',
+      component: () => import('@/views/PiscinasView.vue'),
+      props: true,
+    },
+    {
       path: '/assistente',
       name: 'assistente',
       component: () => import('@/assistente/views/AssistenteView.vue'),

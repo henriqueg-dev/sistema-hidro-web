@@ -143,7 +143,10 @@
   background: var(--color-surface);
 }
 
-:is(.card, .login-card) button {
+/* Botões dentro de card recebem o estilo automaticamente. Fora de card, use a
+   classe .btn — é o mesmo visual, para ações soltas na página. */
+:is(.card, .login-card) button,
+button.btn {
   padding: 0.65rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -155,17 +158,25 @@
   white-space: nowrap;
 }
 
-:is(.card, .login-card) button:hover:not(:disabled) {
+:is(.card, .login-card) button:hover:not(:disabled),
+button.btn:hover:not(:disabled) {
   background: var(--color-primary-hover);
 }
 
-:is(.card, .login-card) button:active:not(:disabled) {
+:is(.card, .login-card) button:active:not(:disabled),
+button.btn:active:not(:disabled) {
   transform: scale(0.99);
 }
 
-:is(.card, .login-card) button:disabled {
+:is(.card, .login-card) button:disabled,
+button.btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Ação solta entre seções, alinhada ao respiro dos cards. */
+button.btn.acao-solta {
+  margin-bottom: 1.5rem;
 }
 
 .card h1 {

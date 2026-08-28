@@ -189,6 +189,14 @@ const CALCULOS = [
     descricao: 'Volume útil e dimensões internas, a partir das unidades de contribuição.',
     componente: CalculoTanqueSeptico,
   },
+  {
+    // Abre em tela própria: o dimensionamento tem trechos e conexões, que não
+    // cabem no painel embutido dos demais cálculos.
+    id: 'piscina',
+    nome: 'Piscina',
+    descricao: 'Recirculação NBR 10339: vazão, diâmetros, dispositivos e perda de carga.',
+    rota: 'piscinas',
+  },
 ]
 
 const props = defineProps({
@@ -221,6 +229,13 @@ function trocarAba(aba) {
 }
 
 function selecionarCalculo(id) {
+  const calculo = CALCULOS.find((item) => item.id === id)
+
+  if (calculo?.rota) {
+    router.push({ name: calculo.rota, params: { id: props.id } })
+    return
+  }
+
   calculoAtivo.value = calculoAtivo.value === id ? '' : id
 }
 

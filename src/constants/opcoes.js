@@ -65,3 +65,10 @@ export const CONDICOES_SANCA = {
   ENTRE_1_2_E_1_8: 'Entre 1,2m e 1,8m',
   ACIMA_1_8: 'Acima de 1,8m',
 }
+
+// Sentido do trecho no circuito de recirculação da piscina. Define o sinal do
+// desnível no balanço de pressão e o limite de velocidade da NBR 10339.
+export const SENTIDOS_TRECHO = {
+  SUCCAO: 'Sucção (ralo → filtro)',
+  RECALQUE: 'Recalque (filtro → bocal)',
+}
