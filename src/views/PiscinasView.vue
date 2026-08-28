@@ -27,9 +27,22 @@
             <h2>{{ piscina.nome }}</h2>
             <p class="subtitle">{{ piscina.tipoUso }}</p>
           </div>
-          <span class="confirmacao">
+          <span v-if="paraRemover === piscina.id" class="confirmacao">
+            <span>Remover esta piscina e seus trechos?</span>
+            <button
+              type="button"
+              class="btn-link perigo"
+              :disabled="removendo"
+              @click="handleExcluir(piscina)"
+            >
+              {{ removendo ? 'Removendo...' : 'Sim, remover' }}
+            </button>
+            <button type="button" class="btn-link" @click="paraRemover = null">Cancelar</button>
+          </span>
+
+          <span v-else class="confirmacao">
             <button type="button" class="btn-link" @click="editarPiscina(piscina)">Alterar</button>
-            <button type="button" class="btn-link perigo" @click="handleExcluir(piscina)">
+            <button type="button" class="btn-link perigo" @click="paraRemover = piscina.id">
               Remover
             </button>
           </span>
@@ -578,6 +591,11 @@ const erro = ref('')
 const formAberto = ref(false)
 const form = ref(clonar(FORM_VAZIO))
 
+// Remoção em dois passos, como nos demais cálculos: apagar a piscina leva junto
+// todos os trechos e conexões dela.
+const paraRemover = ref(null)
+const removendo = ref(false)
+
 function clonar(valor) {
   return JSON.parse(JSON.stringify(valor))
 }
@@ -758,11 +776,18 @@ async function handleSalvar() {
 
 async function handleExcluir(piscina) {
   erro.value = ''
+  removendo.value = true
+
   try {
     await piscinaService.excluir(piscina.id)
+    // O formulário pode estar aberto justamente sobre a piscina removida.
+    if (form.value.id === piscina.id) cancelar()
     piscinas.value = await piscinaService.listarPorEmpreendimento(props.id)
+    paraRemover.value = null
   } catch {
     erro.value = 'Não foi possível remover a piscina.'
+  } finally {
+    removendo.value = false
   }
 }
 
