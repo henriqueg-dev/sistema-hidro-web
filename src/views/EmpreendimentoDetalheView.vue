@@ -194,7 +194,7 @@ const CALCULOS = [
     // cabem no painel embutido dos demais cálculos.
     id: 'piscina',
     nome: 'Piscina',
-    descricao: 'Recirculação NBR 10339: vazão, diâmetros, dispositivos e perda de carga.',
+    descricao: 'Sistema de recirculação: vazão, tubulações, dispositivos e perda de carga.',
     rota: 'piscinas',
   },
 ]
