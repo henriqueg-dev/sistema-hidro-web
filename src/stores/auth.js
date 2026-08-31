@@ -24,6 +24,12 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('perfil', data.perfil)
   }
 
+  /** Substitui o token pelo que o backend renovou enquanto o usuário estava ativo. */
+  function renovarToken(novoToken) {
+    token.value = novoToken
+    localStorage.setItem('token', novoToken)
+  }
+
   function logout() {
     token.value = null
     nome.value = null
@@ -36,5 +42,5 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('perfil')
   }
 
-  return { token, nome, email, perfil, isAuthenticated, login, logout }
+  return { token, nome, email, perfil, isAuthenticated, login, renovarToken, logout }
 })

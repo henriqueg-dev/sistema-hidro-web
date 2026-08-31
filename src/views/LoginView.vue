@@ -40,6 +40,9 @@
             autocomplete="current-password"
           />
 
+          <p v-if="sessaoExpirada" class="msg aviso">
+            Sua sessão expirou por inatividade. Entre novamente.
+          </p>
           <p v-if="erro" class="msg erro">{{ erro }}</p>
 
           <button type="submit" :disabled="carregando">
@@ -56,8 +59,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const email = ref('')
@@ -67,6 +70,9 @@ const carregando = ref(false)
 
 const authStore = useAuthStore()
 const router = useRouter()
+const route = useRoute()
+
+const sessaoExpirada = computed(() => route.query.expirado === '1' && !erro.value)
 
 async function handleSubmit() {
   erro.value = ''
