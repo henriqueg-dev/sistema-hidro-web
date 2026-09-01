@@ -114,13 +114,12 @@
 
             <div class="field">
               <label for="concessionaria">Concessionária</label>
-              <input
-                id="concessionaria"
-                v-model="form.concessionaria"
-                type="text"
-                required
-                placeholder="Ex: Sabesp"
-              />
+              <select id="concessionaria" v-model="form.concessionaria" required>
+                <option value="" disabled>Selecione</option>
+                <option v-for="(rotulo, valor) in CONCESSIONARIAS" :key="valor" :value="valor">
+                  {{ rotulo }}
+                </option>
+              </select>
             </div>
 
             <div class="field actions">
@@ -163,7 +162,7 @@
               v-for="empreendimento in lista.itens"
               :key="empreendimento.id"
               :nome="empreendimento.nome"
-              :titulo="`${empreendimento.endereco} — ${empreendimento.concessionaria}`"
+              :titulo="`${empreendimento.endereco} — ${CONCESSIONARIAS[empreendimento.concessionaria] ?? empreendimento.concessionaria}`"
               :info="`${TIPOS_EMPREENDIMENTO[empreendimento.tipo] ?? empreendimento.tipo} · ${empreendimento.numPavimentos} pav.`"
               :to="{ name: 'empreendimento-detalhe', params: { id: empreendimento.id } }"
               aviso-exclusao="Excluir este empreendimento?"
@@ -193,7 +192,7 @@ import CardItem from '@/components/CardItem.vue'
 import { useListaBuscavel } from '@/composables/useListaBuscavel'
 import * as clienteService from '@/services/clienteService'
 import * as empreendimentoService from '@/services/empreendimentoService'
-import { TIPOS_EMPREENDIMENTO } from '@/constants/opcoes'
+import { TIPOS_EMPREENDIMENTO, CONCESSIONARIAS } from '@/constants/opcoes'
 
 const props = defineProps({
   id: { type: String, required: true },

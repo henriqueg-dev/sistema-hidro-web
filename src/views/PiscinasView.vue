@@ -834,9 +834,9 @@ function editarPiscina(piscina) {
     vazaoBombaM3h: piscina.vazaoBombaM3h,
     alturaManometricaMca: piscina.alturaManometricaMca,
     areaPorSkimmerM2: piscina.areaPorSkimmerM2,
-    numBocaisRetornoAdotado: piscina.numBocaisRetornoAdotado,
-    numSkimmersAdotado: piscina.numSkimmersAdotado,
-    numRalosAdotado: piscina.numRalosAdotado,
+    numBocaisRetornoAdotado: piscina.numBocaisRetornoInformado,
+    numSkimmersAdotado: piscina.numSkimmersInformado,
+    numRalosAdotado: piscina.numRalosInformado,
     numAspiradores: piscina.numAspiradores,
     trechos: piscina.trechos.map((trecho) => ({
       nome: trecho.nome,

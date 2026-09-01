@@ -73,7 +73,11 @@
 
           <div class="field">
             <label for="concessionariaEdicao">Concessionária</label>
-            <input id="concessionariaEdicao" v-model="form.concessionaria" type="text" required />
+            <select id="concessionariaEdicao" v-model="form.concessionaria" required>
+              <option v-for="(rotulo, valor) in CONCESSIONARIAS" :key="valor" :value="valor">
+                {{ rotulo }}
+              </option>
+            </select>
           </div>
 
           <div class="field actions">
@@ -106,7 +110,9 @@
           </div>
           <div class="painel-item">
             <span>Concessionária</span>
-            <strong>{{ empreendimento.concessionaria }}</strong>
+            <strong>
+              {{ CONCESSIONARIAS[empreendimento.concessionaria] ?? empreendimento.concessionaria }}
+            </strong>
           </div>
           <div class="painel-item">
             <span>Cliente</span>
@@ -161,8 +167,9 @@ import CalculoPrumada from '@/components/calculos/CalculoPrumada.vue'
 import CalculoCaixaGordura from '@/components/calculos/CalculoCaixaGordura.vue'
 import CalculoVazaoPredial from '@/components/calculos/CalculoVazaoPredial.vue'
 import CalculoTanqueSeptico from '@/components/calculos/CalculoTanqueSeptico.vue'
+import CalculoRamalPredial from '@/components/calculos/CalculoRamalPredial.vue'
 import * as empreendimentoService from '@/services/empreendimentoService'
-import { TIPOS_EMPREENDIMENTO } from '@/constants/opcoes'
+import { TIPOS_EMPREENDIMENTO, CONCESSIONARIAS } from '@/constants/opcoes'
 
 const CALCULOS = [
   {
@@ -182,6 +189,12 @@ const CALCULOS = [
     nome: 'Vazão predial',
     descricao: 'Demanda média, máxima diária e máxima horária, com o volume da caixa d’água.',
     componente: CalculoVazaoPredial,
+  },
+  {
+    id: 'ramal-predial',
+    nome: 'Ramal predial e hidrômetro',
+    descricao: 'Alimentador entre o hidrômetro e o reservatório, com a sugestão de medidor.',
+    componente: CalculoRamalPredial,
   },
   {
     id: 'tanque-septico',

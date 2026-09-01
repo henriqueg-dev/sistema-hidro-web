@@ -48,6 +48,30 @@ export const UNIDADES_CONTRIBUICAO = {
   BACIA_SANITARIA: 'bacias sanitárias',
 }
 
+export const CONCESSIONARIAS = {
+  DMAE: 'DMAE — Uberlândia/MG',
+  SABESP: 'SABESP — São Paulo/SP',
+  CESAMA: 'CESAMA — Juiz de Fora/MG',
+  COPASA: 'COPASA — Minas Gerais',
+  SANEAGO: 'SANEAGO — Goiás',
+  SANEPAR: 'SANEPAR — Paraná',
+  OUTRA: 'Outra',
+}
+
+// Vazões nominais padronizadas pela NBR 14005 / ISO 4064, em m³/h.
+export const HIDROMETROS = {
+  QN_0_75: '0,75 m³/h',
+  QN_1_5: '1,5 m³/h',
+  QN_2_5: '2,5 m³/h',
+  QN_3_5: '3,5 m³/h',
+  QN_5: '5 m³/h',
+  QN_7: '7 m³/h',
+  QN_10: '10 m³/h',
+  QN_15: '15 m³/h',
+  QN_20: '20 m³/h',
+  QN_30: '30 m³/h',
+}
+
 export const FORMAS_TANQUE = {
   PRISMATICO_RETANGULAR: 'Prismático retangular',
   CILINDRICO: 'Cilíndrico',
