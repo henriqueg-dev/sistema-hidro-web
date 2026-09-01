@@ -83,17 +83,21 @@
   gap: 1rem;
 }
 
+.form-linha .field.medio {
+  flex: 1.4 1 235px;
+}
+
 .form-linha .field {
-  flex: 1 1 150px;
+  flex: 1 1 190px;
   min-width: 0;
 }
 
 .form-linha .field.amplo {
-  flex: 2 1 200px;
+  flex: 2 1 240px;
 }
 
 .form-linha .field.estreito {
-  flex: 0 1 110px;
+  flex: 0.7 1 165px;
 }
 
 .form-linha .field.actions {
@@ -177,6 +181,10 @@ button.btn:disabled {
 /* Ação solta entre seções, alinhada ao respiro dos cards. */
 button.btn.acao-solta {
   margin-bottom: 1.5rem;
+}
+
+:is(.card, .login-card) button.btn-acao {
+  min-width: 200px;
 }
 
 .card h1 {
@@ -694,6 +702,31 @@ button.btn.acao-solta {
   color: var(--color-text-muted);
 }
 
+/* Legenda das colunas de uma tabela técnica. */
+.legenda {
+  margin: 1rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.7rem 1.75rem;
+}
+
+.legenda dt {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-primary);
+}
+
+.legenda dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
 /* Marcador de dica ao lado de um rótulo; o texto vem do title, no tooltip do navegador. */
 .dica {
   display: inline-flex;
@@ -745,6 +778,14 @@ button.btn.acao-solta {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+}
+
+.calculo-dados dd small {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 400;
+  line-height: 1.35;
   color: var(--color-text-muted);
 }
 

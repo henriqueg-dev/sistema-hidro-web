@@ -50,46 +50,64 @@
 
         <div class="calculo-corpo">
           <div class="calculo-destaque">
-            <span>Pressão residual no bocal</span>
+            <span>Pressão que sobra no bocal mais distante</span>
             <strong>{{ formatar(piscina.pressaoResidualMca, 2) }} mca</strong>
-            <small>{{ piscina.trechos.length }} trecho(s) calculado(s)</small>
+            <small>depois de {{ piscina.trechos.length }} trecho(s) de tubulação</small>
           </div>
 
           <dl class="calculo-dados">
             <div>
-              <dt>Área</dt>
+              <dt>Área da lâmina d'água</dt>
               <dd>{{ formatar(piscina.areaM2, 2) }} m²</dd>
             </div>
             <div>
-              <dt>Volume</dt>
+              <dt>Volume de água</dt>
               <dd>{{ formatar(piscina.volumeM3, 2) }} m³</dd>
             </div>
             <div>
-              <dt>Vazão de projeto</dt>
+              <dt>Vazão necessária (calculada)</dt>
               <dd>{{ formatar(piscina.vazaoProjetoM3h, 2) }} m³/h</dd>
             </div>
             <div>
-              <dt>Vazão da bomba</dt>
+              <dt>Vazão da bomba (adotada)</dt>
               <dd>{{ formatar(piscina.vazaoBombaM3h, 2) }} m³/h</dd>
             </div>
             <div>
-              <dt>Tempo filtração</dt>
-              <dd>{{ piscina.tempoFiltracaoH }} h (máx {{ piscina.tempoMaximoFiltracaoH }} h)</dd>
-            </div>
-            <div>
-              <dt>DN recalque</dt>
+              <dt>Tempo de recirculação</dt>
               <dd>
-                {{ piscina.dnRecalqueMm }} mm · {{ formatar(piscina.velocidadeRecalqueMs, 2) }} m/s
+                {{ piscina.tempoFiltracaoH }} h
+                <small>máximo permitido: {{ piscina.tempoMaximoFiltracaoH }} h</small>
               </dd>
             </div>
             <div>
-              <dt>DN sucção</dt>
+              <dt>Tubulação de recalque (retorno)</dt>
               <dd>
-                {{ piscina.dnSuccaoMm }} mm · {{ formatar(piscina.velocidadeSuccaoMs, 2) }} m/s
+                DN {{ piscina.dnRecalqueMm }} mm
+                <small>
+                  água a {{ formatar(piscina.velocidadeRecalqueMs, 2) }} m/s — limite 3,0 m/s
+                </small>
+              </dd>
+            </div>
+            <div>
+              <dt>Tubulação de sucção</dt>
+              <dd>
+                DN {{ piscina.dnSuccaoMm }} mm
+                <small>
+                  água a {{ formatar(piscina.velocidadeSuccaoMs, 2) }} m/s — limite 1,8 m/s
+                </small>
               </dd>
             </div>
           </dl>
         </div>
+
+        <h3 class="titulo-secao">
+          Dispositivos a instalar&nbsp;<span
+            class="dica"
+            title="O número em destaque é o que vai para o projeto. Abaixo dele, o valor que o cálculo devolveu antes do arredondamento e dos mínimos da norma."
+          >
+            ?
+          </span>
+        </h3>
 
         <dl class="calculo-dados dispositivos">
           <div>
@@ -97,8 +115,8 @@
             <dd>
               {{ piscina.numBocaisRetornoAdotado }}
               <small>
-                calc. {{ formatar(piscina.numBocaisRetornoCalculado, 2) }} — vazão
-                {{ formatar(piscina.numBocaisPorVazao, 2) }} · área
+                cálculo: {{ formatar(piscina.numBocaisRetornoCalculado, 2) }} — por vazão
+                {{ formatar(piscina.numBocaisPorVazao, 2) }}, por área
                 {{ formatar(piscina.numBocaisPorArea, 2) }}
               </small>
             </dd>
@@ -107,19 +125,22 @@
             <dt>Skimmers</dt>
             <dd>
               {{ piscina.numSkimmersAdotado }}
-              <small>calc. {{ formatar(piscina.numSkimmersCalculado, 2) }}</small>
+              <small>cálculo: {{ formatar(piscina.numSkimmersCalculado, 2) }}</small>
             </dd>
           </div>
           <div>
             <dt>Ralos de fundo</dt>
             <dd>
               {{ piscina.numRalosAdotado }}
-              <small>calc. {{ formatar(piscina.numRalosCalculado, 2) }}</small>
+              <small>cálculo: {{ formatar(piscina.numRalosCalculado, 2) }}</small>
             </dd>
           </div>
           <div>
             <dt>Aspiradores</dt>
-            <dd>{{ piscina.numAspiradores }}</dd>
+            <dd>
+              {{ piscina.numAspiradores }}
+              <small>definido no projeto</small>
+            </dd>
           </div>
         </dl>
 
@@ -129,23 +150,33 @@
 
         <details v-if="piscina.trechos.length" class="bloco-tabela">
           <summary>Perda de carga trecho a trecho</summary>
+          <p class="subtitle">
+            A pressão sai da bomba e vai sendo consumida a cada trecho. O que sobra no fim é a
+            pressão no bocal mais distante.
+          </p>
           <div class="tabela-rolagem">
             <table class="tabela">
               <thead>
                 <tr>
-                  <th>Trecho</th>
-                  <th>Sentido</th>
-                  <th>Q (m³/h)</th>
-                  <th>DN</th>
-                  <th>Ø int.</th>
-                  <th>V (m/s)</th>
-                  <th>J (m/m)</th>
-                  <th>L eq.</th>
-                  <th>L real</th>
-                  <th>L total</th>
-                  <th>Hf (m)</th>
-                  <th>P mont.</th>
-                  <th>P jus.</th>
+                  <th title="Nome do trecho, do ralo de fundo até o bocal de retorno">Trecho</th>
+                  <th title="Sucção vem antes da bomba; recalque vem depois dela">Sentido</th>
+                  <th title="Vazão que passa neste trecho">Vazão (m³/h)</th>
+                  <th title="Diâmetro nominal do tubo comercial">DN (mm)</th>
+                  <th title="Diâmetro interno real do tubo, usado no cálculo">Interno (mm)</th>
+                  <th title="Velocidade da água: máx. 1,8 m/s na sucção e 3,0 m/s no recalque">
+                    Velocidade (m/s)
+                  </th>
+                  <th title="Perda de carga por metro de tubo (fórmula de Fair-Whipple-Hsiao)">
+                    Perda por metro
+                  </th>
+                  <th title="Conexões convertidas em metros de tubo reto">Conexões (m)</th>
+                  <th title="Comprimento físico do tubo">Tubo (m)</th>
+                  <th title="Conexões + tubo: é o que multiplica a perda por metro">Total (m)</th>
+                  <th title="Pressão perdida neste trecho">Perda no trecho (m)</th>
+                  <th title="Pressão disponível ao entrar no trecho">Pressão entra (mca)</th>
+                  <th title="Pressão que sobra ao sair: vira a de entrada do trecho seguinte">
+                    Pressão sai (mca)
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -167,6 +198,52 @@
               </tbody>
             </table>
           </div>
+
+          <dl class="legenda">
+            <div>
+              <dt>Sentido</dt>
+              <dd>
+                Sucção é o caminho antes da bomba (velocidade máxima de 1,8 m/s); recalque é
+                depois dela, até o bocal (máximo de 3,0 m/s).
+              </dd>
+            </div>
+            <div>
+              <dt>Interno</dt>
+              <dd>
+                Diâmetro real por dentro do tubo, menor que o nominal. É ele que entra na conta,
+                não o DN.
+              </dd>
+            </div>
+            <div>
+              <dt>Perda por metro</dt>
+              <dd>
+                Quanto de pressão cada metro de tubo consome, pela fórmula de
+                Fair-Whipple-Hsiao para PVC. Cresce rápido quando o diâmetro diminui.
+              </dd>
+            </div>
+            <div>
+              <dt>Conexões</dt>
+              <dd>
+                Joelhos, tês e registros não têm comprimento útil, mas atrapalham o fluxo. Cada um
+                é convertido no tanto de tubo reto que causaria a mesma perda.
+              </dd>
+            </div>
+            <div>
+              <dt>Total</dt>
+              <dd>Conexões mais tubo. É o número que multiplica a perda por metro.</dd>
+            </div>
+            <div>
+              <dt>Perda no trecho</dt>
+              <dd>Perda por metro × total. É o quanto de pressão esse trecho custa.</dd>
+            </div>
+            <div>
+              <dt>Pressão entra e sai</dt>
+              <dd>
+                O primeiro trecho entra com a altura manométrica da bomba. Depois, a pressão que
+                sai de um é a que entra no seguinte: sai = entra ± desnível − perda do trecho.
+              </dd>
+            </div>
+          </dl>
         </details>
       </section>
 
@@ -182,8 +259,8 @@
       <section v-if="formAberto" class="card">
         <h2>{{ form.id ? 'Alterar piscina' : 'Nova piscina' }}</h2>
         <p class="subtitle">
-          O tempo de filtração é escolhido na Tabela 1 da NBR 10339; a vazão e a altura manométrica
-          da bomba vêm do catálogo do fornecedor.
+          Preencha as medidas da piscina e os dados da bomba escolhida no catálogo. O sistema
+          calcula a vazão necessária, os diâmetros das tubulações e quantos dispositivos instalar.
         </p>
 
         <form @submit.prevent="handleSalvar">
@@ -238,8 +315,15 @@
                 min="0"
               />
             </div>
-            <div class="field estreito">
-              <label for="tempoFiltracaoH">Filtração (h)</label>
+            <div class="field medio">
+              <label for="tempoFiltracaoH">
+                Tempo de recirculação (h)&nbsp;<span
+                  class="dica"
+                  title="Em quantas horas todo o volume da piscina passa pelo filtro. O máximo depende do tipo de uso e da profundidade."
+                >
+                  ?
+                </span>
+              </label>
               <input
                 id="tempoFiltracaoH"
                 v-model.number="form.tempoFiltracaoH"
@@ -247,8 +331,15 @@
                 min="1"
               />
             </div>
-            <div class="field estreito">
-              <label for="areaPorSkimmerM2">m²/skimmer</label>
+            <div class="field medio">
+              <label for="areaPorSkimmerM2">
+                Área por skimmer (m²)&nbsp;<span
+                  class="dica"
+                  title="Quantos m² de superfície cada skimmer atende. 50 m² em piscina residencial; 25 m² em piscina pública."
+                >
+                  ?
+                </span>
+              </label>
               <input
                 id="areaPorSkimmerM2"
                 v-model.number="form.areaPorSkimmerM2"
@@ -259,14 +350,23 @@
           </div>
 
           <p v-if="previa" class="subtitle">
-            Área {{ formatar(previa.area, 2) }} m² · volume {{ formatar(previa.volume, 2) }} m³ ·
-            vazão de projeto <strong>{{ formatar(previa.vazaoProjeto, 2) }} m³/h</strong> · tempo
-            máximo pela Tabela 1: <strong>{{ previa.tempoMaximo }} h</strong>
+            Com essas medidas: área de {{ formatar(previa.area, 2) }} m², volume de
+            {{ formatar(previa.volume, 2) }} m³, e a bomba precisa dar no mínimo
+            <strong>{{ formatar(previa.vazaoProjeto, 2) }} m³/h</strong>. O tempo de recirculação
+            para este tipo de piscina não pode passar de
+            <strong>{{ previa.tempoMaximo }} h</strong>.
           </p>
 
           <div class="form-linha">
-            <div class="field estreito">
-              <label for="vazaoBombaM3h">Vazão bomba (m³/h)</label>
+            <div class="field medio">
+              <label for="vazaoBombaM3h">
+                Vazão da bomba (m³/h)&nbsp;<span
+                  class="dica"
+                  title="Vazão da bomba escolhida no catálogo do fornecedor. Precisa ser igual ou maior que a vazão de projeto calculada acima."
+                >
+                  ?
+                </span>
+              </label>
               <input
                 id="vazaoBombaM3h"
                 v-model.number="form.vazaoBombaM3h"
@@ -275,8 +375,15 @@
                 min="0"
               />
             </div>
-            <div class="field estreito">
-              <label for="alturaManometricaMca">Hman (mca)</label>
+            <div class="field medio">
+              <label for="alturaManometricaMca">
+                Altura manométrica (mca)&nbsp;<span
+                  class="dica"
+                  title="Pressão que a bomba entrega, em metros de coluna d'água, também lida no catálogo. É a pressão de partida do primeiro trecho."
+                >
+                  ?
+                </span>
+              </label>
               <input
                 id="alturaManometricaMca"
                 v-model.number="form.alturaManometricaMca"
@@ -286,7 +393,14 @@
               />
             </div>
             <div class="field estreito">
-              <label for="numAspiradores">Aspiradores</label>
+              <label for="numAspiradores">
+                Aspiradores&nbsp;<span
+                  class="dica"
+                  title="Quantidade definida no projeto: um a cada 10 m de raio de alcance da mangueira."
+                >
+                  ?
+                </span>
+              </label>
               <input
                 id="numAspiradores"
                 v-model.number="form.numAspiradores"
@@ -366,7 +480,14 @@
                 </select>
               </div>
               <div class="field estreito">
-                <label :for="`trecho-vazao-${indice}`">Q (m³/h)</label>
+                <label :for="`trecho-vazao-${indice}`">
+                  Vazão no trecho (m³/h)&nbsp;<span
+                    class="dica"
+                    title="Vazão que passa neste trecho. Pode ser uma fração da vazão da bomba, quando ela se divide entre ralos ou bocais."
+                  >
+                    ?
+                  </span>
+                </label>
                 <input
                   :id="`trecho-vazao-${indice}`"
                   v-model.number="trecho.vazaoM3h"
@@ -375,16 +496,23 @@
                   min="0"
                 />
               </div>
-              <div class="field estreito">
-                <label :for="`trecho-dn-${indice}`">DN</label>
+              <div class="field">
+                <label :for="`trecho-dn-${indice}`">Diâmetro do tubo</label>
                 <select :id="`trecho-dn-${indice}`" v-model.number="trecho.dnMm">
                   <option v-for="d in referencias?.diametros ?? []" :key="d.dn" :value="d.dn">
-                    {{ d.dn }} ({{ d.diametroInternoMm }})
+                    DN {{ d.dn }} mm — interno {{ d.diametroInternoMm }} mm
                   </option>
                 </select>
               </div>
               <div class="field estreito">
-                <label :for="`trecho-desnivel-${indice}`">Desnível (m)</label>
+                <label :for="`trecho-desnivel-${indice}`">
+                  Desnível (m)&nbsp;<span
+                    class="dica"
+                    title="Diferença de altura entre o início e o fim do trecho. Positivo quando sobe, negativo quando desce."
+                  >
+                    ?
+                  </span>
+                </label>
                 <input
                   :id="`trecho-desnivel-${indice}`"
                   v-model.number="trecho.desnivelM"
@@ -392,8 +520,11 @@
                   step="0.01"
                 />
               </div>
-              <div class="field estreito">
-                <label :for="`trecho-lreal-${indice}`">L real (m)</label>
+              <div class="field medio">
+                <label :for="`trecho-lreal-${indice}`">
+                  Comprimento de tubo (m)
+                  <span class="dica" title="Comprimento físico do tubo, medido no projeto.">?</span>
+                </label>
                 <input
                   :id="`trecho-lreal-${indice}`"
                   v-model.number="trecho.lRealM"
@@ -402,8 +533,15 @@
                   min="0"
                 />
               </div>
-              <div class="field estreito">
-                <label :for="`trecho-ladicional-${indice}`">L eq. fixo (m)</label>
+              <div class="field medio">
+                <label :for="`trecho-ladicional-${indice}`">
+                  Comprimento equivalente (m)&nbsp;<span
+                    class="dica"
+                    title="Perda localizada que você não vai lançar conexão por conexão abaixo — some aqui, já em metros de tubo equivalente."
+                  >
+                    ?
+                  </span>
+                </label>
                 <input
                   :id="`trecho-ladicional-${indice}`"
                   v-model.number="trecho.lEquivalenteAdicionalM"
@@ -437,9 +575,16 @@
                     min="1"
                   />
                 </div>
-                <div class="field estreito">
-                  <label>L eq.</label>
-                  <output>{{ formatar(comprimentoConexao(conexao, trecho.dnMm), 2) }} m</output>
+                <div class="field">
+                  <label>
+                    Equivale a&nbsp;<span
+                      class="dica"
+                      title="Quantos metros de tubo reto esta conexão representa em perda de carga, no diâmetro do trecho."
+                    >
+                      ?
+                    </span>
+                  </label>
+                  <output>{{ formatar(comprimentoConexao(conexao, trecho.dnMm), 2) }} m de tubo</output>
                 </div>
                 <div class="field actions">
                   <button
@@ -461,14 +606,14 @@
             </div>
           </article>
 
-          <button type="button" class="btn-secundario" @click="adicionarTrecho">
+          <button type="button" class="btn-secundario btn-acao" @click="adicionarTrecho">
             Adicionar trecho
           </button>
 
           <p v-if="erro" class="msg erro">{{ erro }}</p>
 
           <div class="form-linha acoes-form">
-            <button type="submit" :disabled="salvando">
+            <button type="submit" class="btn-acao" :disabled="salvando">
               {{ salvando ? 'Calculando...' : 'Calcular e salvar' }}
             </button>
             <button type="button" class="btn-secundario" @click="cancelar">Cancelar</button>
