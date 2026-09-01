@@ -533,26 +533,42 @@
                   min="0"
                 />
               </div>
-              <div class="field medio">
+              <div class="field medio campo-com-check">
                 <label :for="`trecho-ladicional-${indice}`">
                   Comprimento equivalente (m)&nbsp;<span
                     class="dica"
-                    title="Perda localizada que você não vai lançar conexão por conexão abaixo — some aqui, já em metros de tubo equivalente."
+                    title="Automático: soma o comprimento de tubo com as conexões lançadas abaixo. Marque a caixa para digitar você mesmo, no lugar da lista."
                   >
                     ?
                   </span>
                 </label>
                 <input
+                  v-if="trecho.usarComprimentoManual"
                   :id="`trecho-ladicional-${indice}`"
                   v-model.number="trecho.lEquivalenteAdicionalM"
                   type="number"
                   step="0.01"
                   min="0"
                 />
+                <input
+                  v-else
+                  :id="`trecho-ladicional-${indice}`"
+                  :value="formatar(comprimentoTotalPreview(trecho), 2)"
+                  type="text"
+                  disabled
+                />
+                <label class="checkbox-linha">
+                  <input
+                    type="checkbox"
+                    v-model="trecho.usarComprimentoManual"
+                    @change="trecho.lEquivalenteAdicionalM = 0"
+                  />
+                  Inserir na mão
+                </label>
               </div>
             </div>
 
-            <div class="conexoes">
+            <div v-if="!trecho.usarComprimentoManual" class="conexoes">
               <div
                 v-for="(conexao, ic) in trecho.conexoes"
                 :key="ic"
@@ -791,6 +807,15 @@ function lEquivalenteTrecho(trecho) {
   return conexoes + (trecho.lEquivalenteAdicionalM ?? 0)
 }
 
+/** Prévia do comprimento total do trecho: tubo real + conexões lançadas. */
+function comprimentoTotalPreview(trecho) {
+  const conexoes = trecho.conexoes.reduce(
+    (total, conexao) => total + comprimentoConexao(conexao, trecho.dnMm),
+    0,
+  )
+  return (trecho.lRealM ?? 0) + conexoes
+}
+
 function adicionarTrecho() {
   form.value.trechos.push({
     nome: '',
@@ -800,6 +825,7 @@ function adicionarTrecho() {
     desnivelM: 0,
     lRealM: 0,
     lEquivalenteAdicionalM: 0,
+    usarComprimentoManual: false,
     conexoes: [],
   })
 }
@@ -846,6 +872,9 @@ function editarPiscina(piscina) {
       desnivelM: trecho.desnivelM,
       lRealM: trecho.lRealM,
       lEquivalenteAdicionalM: trecho.lEquivalenteAdicionalM,
+      // Cálculo salvo antes de existir o modo manual: se já tem valor lançado, preserva
+      // editável em vez de zerar silenciosamente no próximo salvamento.
+      usarComprimentoManual: (trecho.lEquivalenteAdicionalM ?? 0) > 0,
       conexoes: trecho.conexoes.map((conexao) => ({
         tipo: tipoConexaoPorDescricao(conexao.tipo),
         quantidade: conexao.quantidade,
@@ -906,7 +935,16 @@ async function handleSalvar() {
   salvando.value = true
 
   const { id, ...dados } = form.value
-  const corpo = { ...dados, empreendimentoId: Number(props.id) }
+  const corpo = {
+    ...dados,
+    empreendimentoId: Number(props.id),
+    // usarComprimentoManual é só da tela. No manual, a lista de conexões não entra no
+    // cálculo — o backend soma lEquivalenteAdicionalM sozinho, sem reforço duplicado.
+    trechos: dados.trechos.map(({ usarComprimentoManual, conexoes, ...resto }) => ({
+      ...resto,
+      conexoes: usarComprimentoManual ? [] : conexoes,
+    })),
+  }
 
   try {
     if (id) {
