@@ -266,7 +266,7 @@ const calc = useCalculos(
     formaTanque: 'PRISMATICO_RETANGULAR',
     profundidadeUtilM: null,
   },
-  { max: MAX_POR_EMPREENDIMENTO },
+  { max: MAX_POR_EMPREENDIMENTO, nomeArquivo: 'tanque-septico' },
 )
 
 // A Tabela 1 conta pessoas na maioria dos tipos, mas refeições em restaurante, lugares em

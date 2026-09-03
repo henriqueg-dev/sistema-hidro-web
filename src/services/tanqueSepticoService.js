@@ -17,3 +17,9 @@ export function listarPorEmpreendimento(empreendimentoId) {
     .get(`/api/tanques-septicos/empreendimento/${empreendimentoId}`)
     .then((response) => response.data)
 }
+
+export function baixarMemorialPdf(id) {
+  return api
+    .get(`/api/tanques-septicos/${id}/memorial.pdf`, { responseType: 'blob' })
+    .then((response) => response.data)
+}
