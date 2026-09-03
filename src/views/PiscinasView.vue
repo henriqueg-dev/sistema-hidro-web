@@ -41,6 +41,9 @@
           </span>
 
           <span v-else class="confirmacao">
+            <button type="button" class="btn-link" @click="handleBaixarMemorial(piscina)">
+              Memorial (PDF)
+            </button>
             <button type="button" class="btn-link" @click="editarPiscina(piscina)">Alterar</button>
             <button type="button" class="btn-link perigo" @click="paraRemover = piscina.id">
               Remover
@@ -958,6 +961,21 @@ async function handleSalvar() {
     erro.value = error.response?.data?.mensagem ?? 'Não foi possível calcular a piscina.'
   } finally {
     salvando.value = false
+  }
+}
+
+async function handleBaixarMemorial(piscina) {
+  erro.value = ''
+  try {
+    const blob = await piscinaService.baixarMemorialPdf(piscina.id)
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `memorial-${piscina.nome.replace(/[^\w-]+/g, '-')}.pdf`
+    link.click()
+    URL.revokeObjectURL(url)
+  } catch {
+    erro.value = 'Não foi possível gerar o memorial em PDF.'
   }
 }
 

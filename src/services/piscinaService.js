@@ -21,3 +21,9 @@ export function atualizar(id, dados) {
 export function excluir(id) {
   return api.delete(`/api/piscinas/${id}`).then((response) => response.data)
 }
+
+export function baixarMemorialPdf(id) {
+  return api
+    .get(`/api/piscinas/${id}/memorial.pdf`, { responseType: 'blob' })
+    .then((response) => response.data)
+}
