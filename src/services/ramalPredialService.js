@@ -17,3 +17,9 @@ export function listarPorEmpreendimento(empreendimentoId) {
     .get(`/api/ramais-prediais/empreendimento/${empreendimentoId}`)
     .then((response) => response.data)
 }
+
+export function baixarMemorialPdf(id) {
+  return api
+    .get(`/api/ramais-prediais/${id}/memorial.pdf`, { responseType: 'blob' })
+    .then((response) => response.data)
+}

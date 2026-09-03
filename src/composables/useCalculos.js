@@ -105,6 +105,26 @@ export function useCalculos(service, empreendimentoId, formVazio, opcoes = {}) {
         estado.removendo = false
       }
     },
+
+    // Nem todo cálculo tem memorial em PDF; o botão só aparece quando o service o expõe.
+    get temMemorial() {
+      return !!service.baixarMemorialPdf
+    },
+
+    async baixarMemorial(item) {
+      estado.erro = ''
+      try {
+        const blob = await service.baixarMemorialPdf(item.id)
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `memorial-${opcoes.nomeArquivo ?? 'calculo'}-${item.id}.pdf`
+        link.click()
+        URL.revokeObjectURL(url)
+      } catch {
+        estado.erro = 'Não foi possível gerar o memorial em PDF.'
+      }
+    },
   })
 
   return estado

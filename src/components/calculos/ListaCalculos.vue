@@ -25,6 +25,14 @@
         </span>
 
         <span v-else class="confirmacao">
+          <button
+            v-if="calc.temMemorial"
+            type="button"
+            class="btn-link"
+            @click="calc.baixarMemorial(item)"
+          >
+            Memorial (PDF)
+          </button>
           <button type="button" class="btn-link" @click="calc.editar(item)">Alterar</button>
           <button type="button" class="btn-link perigo" @click="calc.confirmarRemocao(item)">
             Remover

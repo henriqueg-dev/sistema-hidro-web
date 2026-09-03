@@ -225,7 +225,7 @@ const calc = useCalculos(
     velocidadeMaximaMs: null,
     hidrometroInformado: null,
   },
-  { max: MAX_POR_EMPREENDIMENTO },
+  { max: MAX_POR_EMPREENDIMENTO, nomeArquivo: 'ramal-predial' },
 )
 
 function fmt(valor, casas) {
