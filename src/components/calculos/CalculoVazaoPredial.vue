@@ -198,7 +198,7 @@ const calc = useCalculos(
     consumoPerCapita: 150,
     capacidadeEquivalenteDias: 1,
   },
-  { max: MAX_POR_EMPREENDIMENTO },
+  { max: MAX_POR_EMPREENDIMENTO, nomeArquivo: 'vazao-predial' },
 )
 
 function fmt(valor, casas, minimo = casas) {
