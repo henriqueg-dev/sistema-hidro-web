@@ -32,25 +32,48 @@
           <tr>
             <th>Quando</th>
             <th>Usuário</th>
-            <th>O que foi alterado</th>
+            <th>Alteração</th>
+            <th>Registro</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="revisao in lista.itens" :key="revisao.revisao">
-            <td>{{ formatarDataHora(revisao.dataOperacao) }}</td>
-            <td>
-              {{ revisao.usuarioNome ?? '—' }}
-              <small v-if="revisao.usuarioEmail" class="linha-secundaria">
-                {{ revisao.usuarioEmail }}
-              </small>
-            </td>
-            <td>
-              <span v-for="alteracao in revisao.alteracoes" :key="alteracao" class="badge">
-                {{ alteracao }}
-              </span>
-              <span v-if="!revisao.alteracoes.length">—</span>
-            </td>
-          </tr>
+          <template v-for="revisao in lista.itens" :key="revisao.revisao">
+            <tr v-for="(alteracao, i) in revisao.alteracoes" :key="i">
+              <td v-if="i === 0" :rowspan="revisao.alteracoes.length">
+                {{ formatarDataHora(revisao.dataOperacao) }}
+              </td>
+              <td v-if="i === 0" :rowspan="revisao.alteracoes.length">
+                {{ revisao.usuarioNome ?? '—' }}
+                <small v-if="revisao.usuarioEmail" class="linha-secundaria">
+                  {{ revisao.usuarioEmail }}
+                </small>
+              </td>
+              <td>
+                <span class="badge" :class="`acao-${alteracao.acao.toLowerCase()}`">
+                  {{ ACOES_AUDITORIA[alteracao.acao] ?? alteracao.acao }}
+                </span>
+                <small v-for="campo in alteracao.campos" :key="campo" class="linha-secundaria">
+                  {{ campo }}
+                </small>
+              </td>
+              <td>
+                {{ alteracao.tipo }}
+                <small v-if="alteracao.nome" class="linha-secundaria">{{ alteracao.nome }}</small>
+              </td>
+            </tr>
+
+            <tr v-if="!revisao.alteracoes.length">
+              <td>{{ formatarDataHora(revisao.dataOperacao) }}</td>
+              <td>
+                {{ revisao.usuarioNome ?? '—' }}
+                <small v-if="revisao.usuarioEmail" class="linha-secundaria">
+                  {{ revisao.usuarioEmail }}
+                </small>
+              </td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </section>
@@ -63,6 +86,7 @@ import AppLayout from '@/components/AppLayout.vue'
 import CampoBusca from '@/components/CampoBusca.vue'
 import { useListaBuscavel } from '@/composables/useListaBuscavel'
 import * as auditoriaService from '@/services/auditoriaService'
+import { ACOES_AUDITORIA } from '@/constants/opcoes'
 
 const lista = useListaBuscavel(
   (termo) => auditoriaService.linhaDoTempo(termo),

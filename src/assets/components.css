@@ -1208,3 +1208,17 @@ button.btn.acao-solta {
 .modal-acoes {
   justify-content: flex-end;
 }
+
+.tabela td[rowspan] {
+  vertical-align: top;
+}
+
+.badge.acao-criacao {
+  background: #dcfce7;
+  color: var(--color-success);
+}
+
+.badge.acao-exclusao {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+}

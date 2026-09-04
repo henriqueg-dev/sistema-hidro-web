@@ -103,3 +103,9 @@ export const STATUS_ORCAMENTO = {
   APROVADO: 'Aprovado',
   RECUSADO: 'Recusado',
 }
+
+export const ACOES_AUDITORIA = {
+  CRIACAO: 'Criação',
+  ALTERACAO: 'Alteração',
+  EXCLUSAO: 'Exclusão',
+}

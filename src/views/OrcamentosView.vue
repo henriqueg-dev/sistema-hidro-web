@@ -278,7 +278,7 @@ import { useListaBuscavel } from '@/composables/useListaBuscavel'
 import * as clienteService from '@/services/clienteService'
 import * as orcamentoService from '@/services/orcamentoService'
 import * as auditoriaService from '@/services/auditoriaService'
-import { TIPOS_EMPREENDIMENTO, STATUS_ORCAMENTO, CONCESSIONARIAS } from '@/constants/opcoes'
+import { TIPOS_EMPREENDIMENTO, STATUS_ORCAMENTO, CONCESSIONARIAS, ACOES_AUDITORIA } from '@/constants/opcoes'
 
 const route = useRoute()
 const router = useRouter()
@@ -344,7 +344,6 @@ const historico = ref([])
 const carregandoHistorico = ref(false)
 const erroHistorico = ref('')
 const historicoTitulo = ref('')
-const ACOES_AUDITORIA = { CRIACAO: 'Criação', ALTERACAO: 'Alteração', EXCLUSAO: 'Exclusão' }
 
 const modalAberto = ref(false)
 const confirmandoModal = ref(false)
