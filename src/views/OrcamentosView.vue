@@ -176,6 +176,7 @@
             </td>
             <td class="acoes">
               <button type="button" class="btn-link" @click="handleBaixarPdf(orc)">PDF</button>
+              <button type="button" class="btn-link" @click="abrirHistorico(orc)">Histórico</button>
               <button type="button" class="btn-link" @click="iniciarEdicao(orc)">Editar</button>
               <template v-if="paraRemover === orc.id">
                 <button type="button" class="btn-link perigo" @click="handleExcluir(orc)">Sim, remover</button>
@@ -226,6 +227,45 @@
           <button type="button" class="btn-secundario" @click="cancelarModal">Cancelar</button>
         </div>
       </div>
+
+    </div>
+    <div v-if="historicoAberto" class="modal-fundo" @click.self="historicoAberto = false">
+      <div class="card modal-caixa ampla">
+        <h2>Histórico do orçamento</h2>
+        <p class="subtitle">{{ historicoTitulo }}</p>
+
+        <p v-if="carregandoHistorico" class="subtitle">Carregando...</p>
+        <p v-else-if="erroHistorico" class="msg erro">{{ erroHistorico }}</p>
+        <p v-else-if="!historico.length" class="subtitle">Nenhuma alteração registrada.</p>
+
+        <table v-else class="tabela">
+          <thead>
+            <tr>
+              <th>Quando</th>
+              <th>Quem</th>
+              <th>Ação</th>
+              <th>Valor total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="linha in historico" :key="linha.revisao">
+              <td>{{ formatarDataHora(linha.dataOperacao) }}</td>
+              <td>
+                {{ linha.usuarioNome ?? '—' }}
+                <small v-if="linha.usuarioEmail" class="linha-secundaria">{{ linha.usuarioEmail }}</small>
+              </td>
+              <td>{{ ACOES_AUDITORIA[linha.acao] ?? linha.acao }}</td>
+              <td>R$ {{ fmt(linha.valores.valorTotal, 2) }}</td>
+              <td>{{ linha.valores.status ?? '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="form-linha modal-acoes" style="margin-top: 1rem">
+          <button type="button" class="btn-secundario" @click="historicoAberto = false">Fechar</button>
+        </div>
+      </div>
     </div>
   </AppLayout>
 </template>
@@ -237,6 +277,7 @@ import AppLayout from '@/components/AppLayout.vue'
 import { useListaBuscavel } from '@/composables/useListaBuscavel'
 import * as clienteService from '@/services/clienteService'
 import * as orcamentoService from '@/services/orcamentoService'
+import * as auditoriaService from '@/services/auditoriaService'
 import { TIPOS_EMPREENDIMENTO, STATUS_ORCAMENTO, CONCESSIONARIAS } from '@/constants/opcoes'
 
 const route = useRoute()
@@ -298,6 +339,13 @@ function trocarAba(aba) {
   router.replace({ query: { ...route.query, aba } })
 }
 
+const historicoAberto = ref(false)
+const historico = ref([])
+const carregandoHistorico = ref(false)
+const erroHistorico = ref('')
+const historicoTitulo = ref('')
+const ACOES_AUDITORIA = { CRIACAO: 'Criação', ALTERACAO: 'Alteração', EXCLUSAO: 'Exclusão' }
+
 const modalAberto = ref(false)
 const confirmandoModal = ref(false)
 const erroModal = ref('')
@@ -326,6 +374,26 @@ function chavePorRotulo(mapa, valorApi) {
 
 function fmt(valor, casas) {
   return Number(valor ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas })
+}
+
+function formatarDataHora(valor) {
+  return valor ? new Date(valor).toLocaleString('pt-BR') : '—'
+}
+
+async function abrirHistorico(orc) {
+  historicoAberto.value = true
+  historicoTitulo.value = `${orc.clienteNome} — ${orc.nomeEmpreendimento}`
+  historico.value = []
+  erroHistorico.value = ''
+  carregandoHistorico.value = true
+
+  try {
+    historico.value = await auditoriaService.historico('ORCAMENTO', orc.id)
+  } catch {
+    erroHistorico.value = 'Não foi possível carregar o histórico.'
+  } finally {
+    carregandoHistorico.value = false
+  }
 }
 
 function formatarData(data) {
@@ -495,28 +563,3 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.tabela .acoes button + button {
-  margin-left: 0.6rem;
-}
-
-.modal-fundo {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-  padding: 1rem;
-}
-
-.modal-caixa {
-  width: 100%;
-  max-width: 560px;
-}
-
-.modal-acoes {
-  justify-content: flex-end;
-}
-</style>

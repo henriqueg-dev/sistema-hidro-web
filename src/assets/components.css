@@ -350,6 +350,21 @@ button.btn.acao-solta {
   text-align: right;
 }
 
+.tabela .acoes button + button {
+  margin-left: 0.6rem;
+}
+
+.tabela .badge + .badge {
+  margin-left: 0.35rem;
+}
+
+/* Segunda linha de uma célula: e-mail sob o nome, por exemplo. */
+.linha-secundaria {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
 .grade-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -1165,4 +1180,31 @@ button.btn.acao-solta {
   .assistente-lista {
     position: static;
   }
+}
+
+/* Janela sobreposta: usada para completar dados na aprovação e ver histórico. */
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+}
+
+.modal-caixa {
+  width: 100%;
+  max-width: 560px;
+}
+
+.modal-caixa.ampla {
+  max-width: 760px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-acoes {
+  justify-content: flex-end;
 }
