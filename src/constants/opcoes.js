@@ -96,3 +96,10 @@ export const SENTIDOS_TRECHO = {
   SUCCAO: 'Sucção (ralo → filtro)',
   RECALQUE: 'Recalque (filtro → bocal)',
 }
+
+export const STATUS_ORCAMENTO = {
+  RASCUNHO: 'Rascunho',
+  ENVIADO: 'Enviado',
+  APROVADO: 'Aprovado',
+  RECUSADO: 'Recusado',
+}

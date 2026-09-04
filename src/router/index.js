@@ -53,6 +53,12 @@ const router = createRouter({
       name: 'usuarios',
       component: () => import('@/views/UsuariosView.vue'),
     },
+    {
+      path: '/orcamentos',
+      name: 'orcamentos',
+      component: () => import('@/views/OrcamentosView.vue'),
+      meta: { requiresAdmin: true },
+    },
   ],
 })
 

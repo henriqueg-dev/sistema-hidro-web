@@ -160,10 +160,12 @@
 }
 
 :is(.card, .login-card) input,
-:is(.card, .login-card) select {
+:is(.card, .login-card) select,
+:is(.card, .login-card) textarea {
   padding: 0.6rem 0.75rem;
   border: 1.5px solid var(--color-border);
   border-radius: 8px;
+  font-family: inherit;
   font-size: 0.9rem;
   background: var(--color-bg);
   color: var(--color-text);
@@ -172,8 +174,13 @@
     box-shadow 0.15s ease;
 }
 
+:is(.card, .login-card) textarea {
+  resize: vertical;
+}
+
 :is(.card, .login-card) input:focus,
-:is(.card, .login-card) select:focus {
+:is(.card, .login-card) select:focus,
+:is(.card, .login-card) textarea:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--color-primary-soft);
@@ -577,6 +584,32 @@ button.btn.acao-solta {
   border-bottom-color: var(--color-primary);
 }
 
+/* Dentro de card, o estilo de botão do card venceria a .aba por especificidade. */
+:is(.card, .login-card) .abas {
+  margin: 1rem 0 1.25rem;
+}
+
+:is(.card, .login-card) .aba {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+:is(.card, .login-card) .aba:hover:not(:disabled) {
+  background: none;
+  color: var(--color-primary);
+}
+
+:is(.card, .login-card) .aba.ativa {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
 .painel {
   margin-top: 1.25rem;
   display: grid;
@@ -951,7 +984,8 @@ button.btn.acao-solta {
   color: var(--color-success);
 }
 
-.status.inativo {
+.status.inativo,
+.status.vencido {
   color: var(--color-danger);
 }
 
