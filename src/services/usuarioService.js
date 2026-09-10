@@ -17,3 +17,7 @@ export function alterarStatus(id, ativo) {
     .patch(`/api/usuarios/${id}/status`, null, { params: { ativo } })
     .then((response) => response.data)
 }
+
+export function reenviarConvite(id) {
+  return api.post(`/api/usuarios/${id}/reenviar-convite`)
+}

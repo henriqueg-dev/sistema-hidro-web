@@ -2,8 +2,10 @@
   <AppLayout :title="ehAdmin ? 'Gerenciar usuários' : 'Minha conta'">
     <template v-if="ehAdmin">
       <section class="card">
-        <h2>Criar nova conta</h2>
-        <p class="subtitle">Somente administradores podem cadastrar novos acessos.</p>
+        <h2>Convidar engenheiro</h2>
+        <p class="subtitle">
+          Enviamos um e-mail com um código para a pessoa definir a própria senha.
+        </p>
 
         <form class="form-linha" @submit.prevent="handleCriar">
           <div class="field amplo">
@@ -23,18 +25,6 @@
           </div>
 
           <div class="field">
-            <label for="senha">Senha inicial</label>
-            <input
-              id="senha"
-              v-model="form.senha"
-              type="password"
-              required
-              minlength="8"
-              placeholder="Mínimo de 8 caracteres"
-            />
-          </div>
-
-          <div class="field">
             <label for="perfil">Perfil</label>
             <select id="perfil" v-model="form.perfil">
               <option v-for="(rotulo, valor) in PERFIS" :key="valor" :value="valor">
@@ -45,7 +35,7 @@
 
           <div class="field actions">
             <button type="submit" :disabled="criando">
-              {{ criando ? 'Criando...' : 'Criar conta' }}
+              {{ criando ? 'Enviando...' : 'Enviar convite' }}
             </button>
           </div>
         </form>
@@ -56,9 +46,7 @@
 
       <section class="card">
         <h2>Usuários cadastrados</h2>
-        <p class="subtitle">
-          Cada usuário troca a própria senha; o administrador define apenas a senha inicial.
-        </p>
+        <p class="subtitle">Cada engenheiro define a própria senha ao aceitar o convite.</p>
 
         <p v-if="carregandoLista" class="subtitle">Carregando...</p>
         <p v-else-if="!usuarios.length" class="subtitle">Nenhum usuário cadastrado ainda.</p>
@@ -81,12 +69,26 @@
                 <span class="badge">{{ usuario.perfil }}</span>
               </td>
               <td>
-                <span class="status" :class="usuario.ativo ? 'ativo' : 'inativo'">
-                  {{ usuario.ativo ? 'Ativo' : 'Inativo' }}
+                <span
+                  class="status"
+                  :class="usuario.ativo ? 'ativo' : usuario.convitePendente ? 'aviso' : 'inativo'"
+                >
+                  {{
+                    usuario.ativo ? 'Ativo' : usuario.convitePendente ? 'Convite pendente' : 'Inativo'
+                  }}
                 </span>
               </td>
               <td class="acoes">
                 <button
+                  v-if="usuario.convitePendente"
+                  class="btn-link"
+                  :disabled="reenviando === usuario.id"
+                  @click="handleReenviarConvite(usuario)"
+                >
+                  {{ reenviando === usuario.id ? 'Reenviando...' : 'Reenviar convite' }}
+                </button>
+                <button
+                  v-else
                   class="btn-link"
                   :disabled="ehProprioUsuario(usuario) && usuario.ativo"
                   :title="
@@ -190,10 +192,11 @@ const salvandoSenha = ref(false)
 const erroSenha = ref('')
 const sucessoSenha = ref('')
 
-const form = ref({ nome: '', email: '', senha: '', perfil: 'ENGENHEIRO' })
+const form = ref({ nome: '', email: '', perfil: 'ENGENHEIRO' })
 const criando = ref(false)
 const erro = ref('')
 const sucesso = ref('')
+const reenviando = ref(null)
 
 async function carregarUsuarios() {
   carregandoLista.value = true
@@ -213,13 +216,26 @@ async function handleCriar() {
 
   try {
     await usuarioService.criar(form.value)
-    sucesso.value = `Conta de ${form.value.nome} criada com sucesso.`
-    form.value = { nome: '', email: '', senha: '', perfil: 'ENGENHEIRO' }
+    sucesso.value = `Convite enviado para ${form.value.email}.`
+    form.value = { nome: '', email: '', perfil: 'ENGENHEIRO' }
     await carregarUsuarios()
   } catch (error) {
-    erro.value = error.response?.data?.mensagem ?? 'Não foi possível criar a conta.'
+    erro.value = error.response?.data?.mensagem ?? 'Não foi possível enviar o convite.'
   } finally {
     criando.value = false
+  }
+}
+
+async function handleReenviarConvite(usuario) {
+  erroStatus.value = ''
+  reenviando.value = usuario.id
+
+  try {
+    await usuarioService.reenviarConvite(usuario.id)
+  } catch (error) {
+    erroStatus.value = error.response?.data?.mensagem ?? 'Não foi possível reenviar o convite.'
+  } finally {
+    reenviando.value = null
   }
 }
 

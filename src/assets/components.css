@@ -1004,6 +1004,10 @@ button.btn.acao-solta {
   color: var(--color-danger);
 }
 
+.status.aviso {
+  color: #92400e;
+}
+
 @media (max-width: 640px) {
   .form-grid,
   .painel {
