@@ -134,7 +134,7 @@
 
       <h2 class="titulo-secundario">Alterar minha senha</h2>
 
-      <form class="form-linha" @submit.prevent="handleAlterarMinhaSenha">
+      <form v-if="faseSenha === 'form'" class="form-linha" @submit.prevent="handleSolicitarAlteracaoSenha">
         <div class="field amplo">
           <label for="senha-atual">Senha atual</label>
           <input
@@ -161,7 +161,31 @@
 
         <div class="field actions">
           <button type="submit" :disabled="salvandoSenha">
-            {{ salvandoSenha ? 'Salvando...' : 'Alterar senha' }}
+            {{ salvandoSenha ? 'Enviando...' : 'Enviar código' }}
+          </button>
+        </div>
+      </form>
+
+      <form v-else class="form-linha" @submit.prevent="handleConfirmarAlteracaoSenha">
+        <div class="field amplo">
+          <label for="codigo-senha">Código recebido por e-mail</label>
+          <input
+            id="codigo-senha"
+            v-model="codigoSenha"
+            type="text"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="000000"
+            required
+          />
+        </div>
+
+        <div class="field actions">
+          <button type="submit" :disabled="salvandoSenha">
+            {{ salvandoSenha ? 'Salvando...' : 'Confirmar alteração' }}
+          </button>
+          <button type="button" class="btn-link" :disabled="salvandoSenha" @click="cancelarAlteracaoSenha">
+            Cancelar
           </button>
         </div>
       </form>
@@ -186,8 +210,10 @@ const usuarios = ref([])
 const carregandoLista = ref(false)
 const erroStatus = ref('')
 
+const faseSenha = ref('form')
 const senhaAtual = ref('')
 const novaSenha = ref('')
+const codigoSenha = ref('')
 const salvandoSenha = ref(false)
 const erroSenha = ref('')
 const sucessoSenha = ref('')
@@ -239,21 +265,42 @@ async function handleReenviarConvite(usuario) {
   }
 }
 
-async function handleAlterarMinhaSenha() {
+async function handleSolicitarAlteracaoSenha() {
   erroSenha.value = ''
   sucessoSenha.value = ''
   salvandoSenha.value = true
 
   try {
-    await usuarioService.alterarMinhaSenha(senhaAtual.value, novaSenha.value)
-    sucessoSenha.value = 'Senha alterada com sucesso.'
-    senhaAtual.value = ''
-    novaSenha.value = ''
+    await usuarioService.solicitarAlteracaoSenha(senhaAtual.value)
+    faseSenha.value = 'codigo'
   } catch (error) {
-    erroSenha.value = error.response?.data?.mensagem ?? 'Não foi possível alterar a senha.'
+    erroSenha.value = error.response?.data?.mensagem ?? 'Não foi possível enviar o código.'
   } finally {
     salvandoSenha.value = false
   }
+}
+
+async function handleConfirmarAlteracaoSenha() {
+  erroSenha.value = ''
+  sucessoSenha.value = ''
+  salvandoSenha.value = true
+
+  try {
+    await usuarioService.confirmarAlteracaoSenha(codigoSenha.value, novaSenha.value)
+    sucessoSenha.value = 'Senha alterada com sucesso.'
+    cancelarAlteracaoSenha()
+  } catch (error) {
+    erroSenha.value = error.response?.data?.mensagem ?? 'Código inválido ou expirado.'
+  } finally {
+    salvandoSenha.value = false
+  }
+}
+
+function cancelarAlteracaoSenha() {
+  faseSenha.value = 'form'
+  senhaAtual.value = ''
+  novaSenha.value = ''
+  codigoSenha.value = ''
 }
 
 function ehProprioUsuario(usuario) {
