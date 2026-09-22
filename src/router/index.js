@@ -17,6 +17,11 @@ const router = createRouter({
       meta: { public: true },
     },
     {
+      path: '/assinatura',
+      name: 'assinatura',
+      component: () => import('@/views/AssinaturaView.vue'),
+    },
+    {
       path: '/',
       name: 'home',
       component: () => import('@/views/HomeView.vue'),

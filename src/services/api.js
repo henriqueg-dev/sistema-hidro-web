@@ -31,6 +31,9 @@ api.interceptors.response.use(
       authStore.logout()
       router.push({ name: 'login', query: { expirado: '1' } })
     }
+    if (error.response?.status === 402 && router.currentRoute.value.name !== 'assinatura') {
+      router.push({ name: 'assinatura' })
+    }
     return Promise.reject(error)
   },
 )

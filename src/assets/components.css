@@ -371,6 +371,51 @@ button.btn.acao-solta {
   gap: 1.1rem;
 }
 
+.planos-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.1rem;
+}
+
+.plano-card {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.plano-preco {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+
+.plano-preco span {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.plano-lista {
+  list-style: none;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+}
+
+.plano-lista li {
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.pix-qrcode {
+  display: block;
+  width: 280px;
+  height: 280px;
+  margin: 0.5rem auto 1.25rem;
+}
+
 .card-item-box {
   position: relative;
 }
