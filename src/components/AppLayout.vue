@@ -26,6 +26,10 @@
         </button>
       </div>
 
+      <p v-if="authStore.nomeEscritorio" class="escritorio-nome" :title="authStore.nomeEscritorio">
+        {{ authStore.nomeEscritorio }}
+      </p>
+
       <nav class="nav-links">
         <RouterLink to="/clientes" class="nav-link">Clientes</RouterLink>
         <RouterLink to="/prumadas" class="nav-link">Prumadas</RouterLink>
@@ -35,6 +39,9 @@
         </RouterLink>
         <RouterLink v-if="authStore.perfil === 'ADMIN'" to="/auditoria" class="nav-link">
           Auditoria
+        </RouterLink>
+        <RouterLink v-if="authStore.perfil === 'ADMIN'" to="/assinatura" class="nav-link">
+          Assinatura
         </RouterLink>
         <RouterLink to="/usuarios" class="nav-link">
           {{ authStore.perfil === 'ADMIN' ? 'Usuários' : 'Minha conta' }}

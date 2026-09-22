@@ -52,9 +52,6 @@
           <p class="texto-secundario">
             <router-link :to="{ name: 'definir-senha' }">Esqueci minha senha</router-link>
           </p>
-          <p class="texto-secundario">
-            Ainda não tem conta? Peça para um administrador te convidar no sistema.
-          </p>
         </form>
       </section>
     </div>
