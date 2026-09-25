@@ -89,15 +89,12 @@ import CampoBusca from '@/components/CampoBusca.vue'
 import { useListaBuscavel } from '@/composables/useListaBuscavel'
 import * as auditoriaService from '@/services/auditoriaService'
 import { ACOES_AUDITORIA } from '@/constants/opcoes'
+import { formatarDataHora } from '@/utils/formato'
 
 const lista = useListaBuscavel(
   (termo) => auditoriaService.linhaDoTempo(termo),
   'Não foi possível carregar a auditoria.',
 )
-
-function formatarDataHora(valor) {
-  return valor ? new Date(valor).toLocaleString('pt-BR') : '—'
-}
 
 onMounted(lista.carregar)
 </script>

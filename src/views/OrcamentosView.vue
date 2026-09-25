@@ -280,6 +280,7 @@ import * as clienteService from '@/services/clienteService'
 import * as orcamentoService from '@/services/orcamentoService'
 import * as auditoriaService from '@/services/auditoriaService'
 import { TIPOS_EMPREENDIMENTO, STATUS_ORCAMENTO, CONCESSIONARIAS, ACOES_AUDITORIA } from '@/constants/opcoes'
+import { formatarDataHora } from '@/utils/formato'
 
 const route = useRoute()
 const router = useRouter()
@@ -374,10 +375,6 @@ function chavePorRotulo(mapa, valorApi) {
 
 function fmt(valor, casas) {
   return Number(valor ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas })
-}
-
-function formatarDataHora(valor) {
-  return valor ? new Date(valor).toLocaleString('pt-BR') : '—'
 }
 
 async function abrirHistorico(orc) {
