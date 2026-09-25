@@ -34,14 +34,18 @@
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: 14px;
   padding: 1.75rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 10px 30px rgba(15, 23, 42, 0.05);
   margin-bottom: 1.5rem;
 }
 
 .card h2 {
-  font-size: 1.1rem;
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   margin-bottom: 1rem;
 }
 
@@ -409,8 +413,19 @@ a.btn-link {
   text-align: left;
   padding: 0.6rem 0.5rem;
   color: var(--color-text-muted);
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   border-bottom: 1.5px solid var(--color-border);
+}
+
+.tabela tbody tr {
+  transition: background 0.15s ease;
+}
+
+.tabela tbody tr:hover {
+  background: var(--color-primary-light);
 }
 
 .tabela td {
@@ -611,23 +626,37 @@ a.btn-link {
 
 .card-item:hover {
   border-color: var(--color-primary);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
 }
 
+/* Miniatura em planta: quadriculado sobre um degradê azul-claro. */
 .card-item-icone {
   aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-primary-light);
+  background-color: var(--color-primary-light);
+  background-image:
+    linear-gradient(rgba(29, 78, 216, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 78, 216, 0.07) 1px, transparent 1px),
+    linear-gradient(135deg, var(--color-primary-light), var(--color-primary-soft));
+  background-size:
+    16px 16px,
+    16px 16px,
+    auto;
 }
 
 .card-item-iniciais {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-primary);
   letter-spacing: 0.03em;
+  transition: transform 0.2s ease;
+}
+
+.card-item:hover .card-item-iniciais {
+  transform: scale(1.08);
 }
 
 .card-item-nome {
@@ -1189,22 +1218,44 @@ a.btn-link {
   margin-bottom: 1.5rem;
 }
 
+/* Faixa azul no topo, como um tubo cortado; os de orçamento levam o âmbar. */
 .indicador {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  padding: 1.1rem 1.25rem;
+  padding: 1.2rem 1.25rem 1.1rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+  border-radius: 14px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 10px 30px rgba(15, 23, 42, 0.05);
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.indicador::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), #38bdf8);
+}
+
+.indicador[href='/orcamentos']::before {
+  background: linear-gradient(90deg, #d97706, #fcd34d);
 }
 
 a.indicador:hover {
   border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
 }
 
 .indicador span {
@@ -1217,7 +1268,8 @@ a.indicador:hover {
 
 .indicador strong {
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
@@ -1268,8 +1320,21 @@ a.indicador:hover {
 .barras-valor {
   display: block;
   height: 100%;
-  background: var(--color-primary);
+  background: linear-gradient(90deg, var(--color-primary), #38bdf8);
   border-radius: 4px;
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .barras-valor {
+    animation: barras-encher 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s backwards;
+  }
+}
+
+@keyframes barras-encher {
+  from {
+    transform: scaleX(0);
+  }
 }
 
 .barras strong {
@@ -1481,7 +1546,8 @@ a.indicador:hover {
 .modal-fundo {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(10, 26, 71, 0.5);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;

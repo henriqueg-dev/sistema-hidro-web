@@ -1,7 +1,67 @@
 .layout {
   --largura-menu: 240px;
+  --altura-faixa: 240px;
+  /* planta técnica noturna do login, dividida entre o menu e a faixa do topo */
+  --planta-noturna:
+    radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.4), transparent 480px),
+    radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.14), transparent 420px),
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px) 0 0 / 24px 24px,
+    #0a1a47;
+  /* contexto próprio para a faixa (z-index -1) ficar sobre o fundo e sob os cards */
+  position: relative;
+  z-index: 0;
   min-height: 100vh;
-  background: var(--color-bg);
+  /* quadriculado discreto de planta, como no site */
+  background-color: var(--color-bg);
+  background-image:
+    linear-gradient(rgba(29, 78, 216, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 78, 216, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Faixa do topo: continua o menu em "L", como o topo do site; os cards sobem sobre ela.
+   No celular o texto de apoio quebra em muitas linhas e passaria da faixa, então ela some. */
+@media (min-width: 721px) {
+  .layout::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 auto;
+    height: var(--altura-faixa);
+    background: var(--planta-noturna);
+    background-attachment: fixed;
+  }
+
+  .content > :is(.page-title, .voltar) {
+    color: #fff;
+  }
+
+  .content > .page-title + .subtitle {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .content > .voltar:hover {
+    color: #fcd34d;
+  }
+
+  /* Abas logo abaixo do título ficam na faixa; a ativa leva o âmbar, como no menu. */
+  .content > .abas {
+    box-shadow: inset 0 -1.5px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .content > .abas .aba {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .content > .abas .aba:hover,
+  .content > .abas .aba.ativa {
+    color: #fff;
+  }
+
+  .content > .abas .aba.ativa {
+    border-bottom-color: #fcd34d;
+  }
 }
 
 .sidebar {
@@ -15,9 +75,17 @@
   flex-direction: column;
   padding: 1rem 0.85rem;
   overflow-y: auto;
-  background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
+  background: var(--planta-noturna);
+  /* ancorado na janela, como a faixa: o quadriculado e os brilhos emendam sem costura */
+  background-attachment: fixed;
+  color: #fff;
   transition: transform 0.2s ease;
+}
+
+.sidebar a:focus-visible,
+.sidebar button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .menu-oculto .sidebar {
@@ -54,6 +122,15 @@
   color: var(--color-primary);
 }
 
+.sidebar .menu-botao {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.sidebar .menu-botao:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
 .menu-botao svg {
   width: 20px;
   height: 20px;
@@ -75,9 +152,10 @@
   gap: 0.6rem;
   flex: 1;
   min-width: 0;
-  font-weight: 700;
-  color: var(--color-primary);
-  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -93,7 +171,7 @@
   margin: -0.75rem 0 1rem;
   padding: 0 0.1rem;
   overflow: hidden;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.55);
   font-size: 0.75rem;
   font-weight: 600;
   text-overflow: ellipsis;
@@ -112,17 +190,25 @@
 .nav-link {
   padding: 0.55rem 0.8rem;
   border-radius: 8px;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.72);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
-  transition: background 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+/* Barrinha âmbar à esquerda, a cor de destaque do site. */
 .nav-link.router-link-active {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: inset 3px 0 0 #fcd34d;
+  color: #fff;
 }
 
 .user-info {
@@ -130,7 +216,7 @@
   flex-direction: column;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .user-identidade {
@@ -144,8 +230,9 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--color-primary-soft);
-  color: var(--color-primary-hover);
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.3);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,7 +250,7 @@
 
 .user-meta strong {
   font-size: 0.88rem;
-  color: var(--color-text);
+  color: #fff;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -171,15 +258,15 @@
 
 .user-meta span {
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .logout-btn {
   padding: 0.45rem 0.9rem;
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
   border-radius: 8px;
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: transparent;
+  color: #fff;
   font-weight: 600;
   font-size: 0.85rem;
   cursor: pointer;
@@ -187,8 +274,8 @@
 }
 
 .logout-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .content {
@@ -203,8 +290,37 @@
 }
 
 .page-title {
-  font-size: 1.3rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   margin-bottom: 1.25rem;
+}
+
+/* Conteúdo entra em cascata, como as seções do site. Fill "backwards" para a
+   animação não deixar transform/opacity aplicados e prender modais fixos. */
+@media (prefers-reduced-motion: no-preference) {
+  .content > * {
+    animation: app-surgir 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  }
+
+  .content > :nth-child(2) {
+    animation-delay: 0.05s;
+  }
+
+  .content > :nth-child(3) {
+    animation-delay: 0.1s;
+  }
+
+  .content > :nth-child(n + 4) {
+    animation-delay: 0.15s;
+  }
+}
+
+@keyframes app-surgir {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 }
 
 /* Descrição da página, entre o título e o primeiro card. */
