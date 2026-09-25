@@ -77,7 +77,7 @@ const calc = useCalculos(
     taxaOcupacao: props.empreendimento.taxaOcupacao ?? 4,
     numApartamentos: props.empreendimento.numUnidades,
   },
-  { max: MAX_POR_EMPREENDIMENTO },
+  { max: MAX_POR_EMPREENDIMENTO, nomeArquivo: 'caixa-gordura' },
 )
 
 onMounted(calc.carregar)

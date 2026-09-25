@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
+import { useAvisoStore } from '@/stores/aviso'
 import router from '@/router'
 
 const CABECALHO_RENOVACAO = 'x-token-renovado'
@@ -26,12 +27,21 @@ api.interceptors.response.use(
     return response
   },
   (error) => {
-    if (error.response?.status === 401) {
+    // Em /api/auth, 401/403 é senha ou código errado: a própria tela mostra a mensagem.
+    const ehAutenticacao = error.config?.url?.startsWith('/api/auth/')
+    const status = error.response?.status
+
+    if (status === 401 && !ehAutenticacao) {
       const authStore = useAuthStore()
       authStore.logout()
       router.push({ name: 'login', query: { expirado: '1' } })
     }
-    if (error.response?.status === 402 && router.currentRoute.value.name !== 'assinatura') {
+    if (status === 403 && !ehAutenticacao) {
+      useAvisoStore().mostrar(
+        error.response.data?.mensagem ?? 'Seu perfil não tem permissão para esta ação.',
+      )
+    }
+    if (status === 402 && router.currentRoute.value.name !== 'assinatura') {
       router.push({ name: 'assinatura' })
     }
     return Promise.reject(error)

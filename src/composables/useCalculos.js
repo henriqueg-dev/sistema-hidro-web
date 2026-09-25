@@ -1,4 +1,5 @@
 import { reactive } from 'vue'
+import { baixarArquivo } from '@/utils/arquivo'
 
 // Cópia profunda: formulários com listas (conexões) não podem dividir arrays entre si.
 function copiar(valor) {
@@ -9,6 +10,8 @@ function copiar(valor) {
  * Estado e CRUD de um cálculo que fica registrado no empreendimento.
  * `service` precisa expor listarPorEmpreendimento, criar, atualizar e excluir;
  * `formVazio` define os campos do formulário (e é o que vai no corpo da requisição).
+ * `opcoes.paraForm(item)` e `opcoes.paraCorpo(campos)` convertem registro→formulário e
+ * formulário→requisição quando os formatos não coincidem campo a campo.
  */
 export function useCalculos(service, empreendimentoId, formVazio, opcoes = {}) {
   const estado = reactive({
@@ -51,7 +54,9 @@ export function useCalculos(service, empreendimentoId, formVazio, opcoes = {}) {
 
     editar(item) {
       estado.form = copiar(
-        Object.fromEntries(Object.keys(formVazio).map((campo) => [campo, item[campo]])),
+        opcoes.paraForm
+          ? opcoes.paraForm(item)
+          : Object.fromEntries(Object.keys(formVazio).map((campo) => [campo, item[campo]])),
       )
       estado.formAberto = true
       estado.paraRemover = null
@@ -77,7 +82,7 @@ export function useCalculos(service, empreendimentoId, formVazio, opcoes = {}) {
       estado.salvando = true
 
       const { id, ...campos } = estado.form
-      const dados = { ...campos, empreendimentoId }
+      const dados = { ...(opcoes.paraCorpo ? opcoes.paraCorpo(campos) : campos), empreendimentoId }
 
       try {
         if (id) {
@@ -111,21 +116,11 @@ export function useCalculos(service, empreendimentoId, formVazio, opcoes = {}) {
       }
     },
 
-    // Nem todo cálculo tem memorial em PDF; o botão só aparece quando o service o expõe.
-    get temMemorial() {
-      return !!service.baixarMemorialPdf
-    },
-
     async baixarMemorial(item) {
       estado.erro = ''
       try {
         const blob = await service.baixarMemorialPdf(item.id)
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `memorial-${opcoes.nomeArquivo ?? 'calculo'}-${item.id}.pdf`
-        link.click()
-        URL.revokeObjectURL(url)
+        baixarArquivo(blob, `memorial-${opcoes.nomeArquivo ?? 'calculo'}-${item.id}.pdf`)
       } catch {
         estado.erro = 'Não foi possível gerar o memorial em PDF.'
       }

@@ -364,6 +364,20 @@ a.btn-link {
   background: #f0fdf4;
 }
 
+.msg.aviso-global {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1rem;
+}
+
+.msg.aviso-global .btn-link {
+  color: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
 .tabela {
   width: 100%;
   border-collapse: collapse;

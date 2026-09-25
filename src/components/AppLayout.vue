@@ -80,6 +80,12 @@
     </button>
 
     <main class="content">
+      <p v-if="aviso.mensagem" class="msg erro aviso-global" role="alert">
+        <span>{{ aviso.mensagem }}</span>
+        <button type="button" class="btn-link" aria-label="Fechar aviso" @click="aviso.limpar()">
+          &times;
+        </button>
+      </p>
       <h1 v-if="title" class="page-title">{{ title }}</h1>
       <slot />
     </main>
@@ -89,6 +95,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useAvisoStore } from '@/stores/aviso'
 import { PERFIS } from '@/constants/opcoes'
 import { useRouter } from 'vue-router'
 
@@ -99,6 +106,7 @@ defineProps({
 })
 
 const authStore = useAuthStore()
+const aviso = useAvisoStore()
 const router = useRouter()
 
 const menuAberto = ref(localStorage.getItem(CHAVE_MENU) !== 'false')

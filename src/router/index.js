@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useAvisoStore } from '@/stores/aviso'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -99,5 +100,8 @@ router.beforeEach((to) => {
     return { name: 'home' }
   }
 })
+
+// Aviso de permissão pertence à tela em que surgiu.
+router.afterEach(() => useAvisoStore().limpar())
 
 export default router

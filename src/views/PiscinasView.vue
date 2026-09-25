@@ -10,42 +10,42 @@
       diâmetros de sucção e recalque, dispositivos e perda de carga trecho a trecho.
     </p>
 
-    <p v-if="carregando" class="subtitle">Carregando...</p>
+    <p v-if="carregando || calc.carregando" class="subtitle">Carregando...</p>
 
     <template v-else>
-      <section v-if="!piscinas.length && !formAberto" class="card">
+      <section v-if="!calc.itens.length && !calc.formAberto" class="card">
         <div class="estado-vazio">
           <strong>Nenhuma piscina dimensionada</strong>
           <span>Cadastre a primeira piscina deste empreendimento.</span>
-          <button type="button" @click="novaPiscina">Nova piscina</button>
+          <button type="button" @click="calc.novo()">Nova piscina</button>
         </div>
       </section>
 
-      <section v-for="piscina in piscinas" :key="piscina.id" class="card">
+      <section v-for="piscina in calc.itens" :key="piscina.id" class="card">
         <div class="card-header">
           <div class="card-header-titulo">
             <h2>{{ piscina.nome }}</h2>
             <p class="subtitle">{{ piscina.tipoUso }}</p>
           </div>
-          <span v-if="paraRemover === piscina.id" class="confirmacao">
+          <span v-if="calc.paraRemover === piscina.id" class="confirmacao">
             <span>Remover esta piscina e seus trechos?</span>
             <button
               type="button"
               class="btn-link perigo"
-              :disabled="removendo"
-              @click="handleExcluir(piscina)"
+              :disabled="calc.removendo"
+              @click="calc.remover(piscina)"
             >
-              {{ removendo ? 'Removendo...' : 'Sim, remover' }}
+              {{ calc.removendo ? 'Removendo...' : 'Sim, remover' }}
             </button>
-            <button type="button" class="btn-link" @click="paraRemover = null">Cancelar</button>
+            <button type="button" class="btn-link" @click="calc.cancelarRemocao()">Cancelar</button>
           </span>
 
           <span v-else class="confirmacao">
-            <button type="button" class="btn-link" @click="handleBaixarMemorial(piscina)">
+            <button type="button" class="btn-link" @click="calc.baixarMemorial(piscina)">
               Memorial (PDF)
             </button>
-            <button type="button" class="btn-link" @click="editarPiscina(piscina)">Alterar</button>
-            <button type="button" class="btn-link perigo" @click="paraRemover = piscina.id">
+            <button type="button" class="btn-link" @click="calc.editar(piscina)">Alterar</button>
+            <button type="button" class="btn-link perigo" @click="calc.confirmarRemocao(piscina)">
               Remover
             </button>
           </span>
@@ -250,32 +250,34 @@
         </details>
       </section>
 
+      <p v-if="calc.erro && !calc.formAberto" class="msg erro">{{ calc.erro }}</p>
+
       <button
-        v-if="piscinas.length && !formAberto"
+        v-if="calc.itens.length && !calc.formAberto"
         type="button"
         class="btn acao-solta"
-        @click="novaPiscina"
+        @click="calc.novo()"
       >
         Nova piscina
       </button>
 
-      <section v-if="formAberto" class="card">
-        <h2>{{ form.id ? 'Alterar piscina' : 'Nova piscina' }}</h2>
+      <section v-if="calc.formAberto" class="card">
+        <h2>{{ calc.form.id ? 'Alterar piscina' : 'Nova piscina' }}</h2>
         <p class="subtitle">
           Preencha as medidas da piscina e os dados da bomba escolhida no catálogo. O sistema
           calcula a vazão necessária, os diâmetros das tubulações e quantos dispositivos instalar.
         </p>
 
-        <form class="pilha" @submit.prevent="handleSalvar">
+        <form class="pilha" @submit.prevent="calc.salvar()">
           <div class="form-linha">
             <div class="field amplo">
               <label for="nome">Nome</label>
-              <input id="nome" v-model="form.nome" type="text" placeholder="Adulto" />
+              <input id="nome" v-model="calc.form.nome" type="text" placeholder="Adulto" />
             </div>
 
             <div class="field amplo">
               <label for="tipoUso">Tipo de uso</label>
-              <select id="tipoUso" v-model="form.tipoUso">
+              <select id="tipoUso" v-model="calc.form.tipoUso">
                 <option
                   v-for="tipo in referencias?.tempoFiltracao ?? []"
                   :key="tipo.tipo"
@@ -292,7 +294,7 @@
               <label for="larguraM">Largura (m)</label>
               <input
                 id="larguraM"
-                v-model.number="form.larguraM"
+                v-model.number="calc.form.larguraM"
                 type="number"
                 step="0.01"
                 min="0"
@@ -302,7 +304,7 @@
               <label for="comprimentoM">Comprimento (m)</label>
               <input
                 id="comprimentoM"
-                v-model.number="form.comprimentoM"
+                v-model.number="calc.form.comprimentoM"
                 type="number"
                 step="0.01"
                 min="0"
@@ -312,7 +314,7 @@
               <label for="profundidadeM">Profundidade (m)</label>
               <input
                 id="profundidadeM"
-                v-model.number="form.profundidadeM"
+                v-model.number="calc.form.profundidadeM"
                 type="number"
                 step="0.01"
                 min="0"
@@ -329,7 +331,7 @@
               </label>
               <input
                 id="tempoFiltracaoH"
-                v-model.number="form.tempoFiltracaoH"
+                v-model.number="calc.form.tempoFiltracaoH"
                 type="number"
                 min="1"
               />
@@ -345,7 +347,7 @@
               </label>
               <input
                 id="areaPorSkimmerM2"
-                v-model.number="form.areaPorSkimmerM2"
+                v-model.number="calc.form.areaPorSkimmerM2"
                 type="number"
                 min="1"
               />
@@ -372,7 +374,7 @@
               </label>
               <input
                 id="vazaoBombaM3h"
-                v-model.number="form.vazaoBombaM3h"
+                v-model.number="calc.form.vazaoBombaM3h"
                 type="number"
                 step="0.1"
                 min="0"
@@ -389,7 +391,7 @@
               </label>
               <input
                 id="alturaManometricaMca"
-                v-model.number="form.alturaManometricaMca"
+                v-model.number="calc.form.alturaManometricaMca"
                 type="number"
                 step="0.1"
                 min="0"
@@ -406,7 +408,7 @@
               </label>
               <input
                 id="numAspiradores"
-                v-model.number="form.numAspiradores"
+                v-model.number="calc.form.numAspiradores"
                 type="number"
                 min="0"
               />
@@ -424,7 +426,7 @@
                 <label for="numBocaisRetornoAdotado">Bocais de retorno</label>
                 <input
                   id="numBocaisRetornoAdotado"
-                  v-model.number="form.numBocaisRetornoAdotado"
+                  v-model.number="calc.form.numBocaisRetornoAdotado"
                   type="number"
                   min="0"
                 />
@@ -433,7 +435,7 @@
                 <label for="numSkimmersAdotado">Skimmers</label>
                 <input
                   id="numSkimmersAdotado"
-                  v-model.number="form.numSkimmersAdotado"
+                  v-model.number="calc.form.numSkimmersAdotado"
                   type="number"
                   min="0"
                 />
@@ -442,7 +444,7 @@
                 <label for="numRalosAdotado">Ralos de fundo</label>
                 <input
                   id="numRalosAdotado"
-                  v-model.number="form.numRalosAdotado"
+                  v-model.number="calc.form.numRalosAdotado"
                   type="number"
                   min="0"
                 />
@@ -456,7 +458,7 @@
             parte da do anterior; o primeiro parte da altura manométrica da bomba.
           </p>
 
-          <article v-for="(trecho, indice) in form.trechos" :key="indice" class="trecho-editor">
+          <article v-for="(trecho, indice) in calc.form.trechos" :key="indice" class="trecho-editor">
             <div class="trecho-cabecalho">
               <span class="badge">Trecho {{ indice + 1 }}</span>
               <button type="button" class="btn-link perigo" @click="removerTrecho(indice)">
@@ -631,13 +633,13 @@
             Adicionar trecho
           </button>
 
-          <p v-if="erro" class="msg erro">{{ erro }}</p>
+          <p v-if="calc.erro" class="msg erro">{{ calc.erro }}</p>
 
           <div class="card-acoes">
-            <button type="submit" class="btn-acao" :disabled="salvando">
-              {{ salvando ? 'Calculando...' : 'Calcular e salvar' }}
+            <button type="submit" class="btn-acao" :disabled="calc.salvando">
+              {{ calc.salvando ? 'Calculando...' : 'Calcular e salvar' }}
             </button>
-            <button type="button" class="btn-secundario" @click="cancelar">Cancelar</button>
+            <button type="button" class="btn-secundario" @click="calc.cancelar()">Cancelar</button>
           </div>
         </form>
       </section>
@@ -726,6 +728,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
+import { useCalculos } from '@/composables/useCalculos'
 import * as piscinaService from '@/services/piscinaService'
 import * as empreendimentoService from '@/services/empreendimentoService'
 import { SENTIDOS_TRECHO } from '@/constants/opcoes'
@@ -753,22 +756,14 @@ const FORM_VAZIO = {
 }
 
 const empreendimento = ref(null)
-const piscinas = ref([])
 const referencias = ref(null)
 const carregando = ref(true)
-const salvando = ref(false)
-const erro = ref('')
-const formAberto = ref(false)
-const form = ref(clonar(FORM_VAZIO))
 
-// Remoção em dois passos, como nos demais cálculos: apagar a piscina leva junto
-// todos os trechos e conexões dela.
-const paraRemover = ref(null)
-const removendo = ref(false)
-
-function clonar(valor) {
-  return JSON.parse(JSON.stringify(valor))
-}
+const calc = useCalculos(piscinaService, Number(props.id), FORM_VAZIO, {
+  nomeArquivo: 'piscina',
+  paraForm: formDaPiscina,
+  paraCorpo: corpoDaPiscina,
+})
 
 function formatar(valor, casas) {
   if (valor === null || valor === undefined) return '—'
@@ -780,7 +775,7 @@ function formatar(valor, casas) {
 
 /** Prévia local, só para orientar o preenchimento — o cálculo oficial é do backend. */
 const previa = computed(() => {
-  const { larguraM, comprimentoM, profundidadeM, tempoFiltracaoH, tipoUso } = form.value
+  const { larguraM, comprimentoM, profundidadeM, tempoFiltracaoH, tipoUso } = calc.form
   if (!larguraM || !comprimentoM || !profundidadeM || !tempoFiltracaoH) return null
 
   const area = larguraM * comprimentoM
@@ -822,10 +817,10 @@ function comprimentoTotalPreview(trecho) {
 }
 
 function adicionarTrecho() {
-  form.value.trechos.push({
+  calc.form.trechos.push({
     nome: '',
     sentido: 'SUCCAO',
-    vazaoM3h: form.value.vazaoBombaM3h,
+    vazaoM3h: calc.form.vazaoBombaM3h,
     dnMm: referencias.value?.diametros?.[0]?.dn ?? 50,
     desnivelM: 0,
     lRealM: 0,
@@ -836,7 +831,7 @@ function adicionarTrecho() {
 }
 
 function removerTrecho(indice) {
-  form.value.trechos.splice(indice, 1)
+  calc.form.trechos.splice(indice, 1)
 }
 
 function adicionarConexao(trecho) {
@@ -846,16 +841,10 @@ function adicionarConexao(trecho) {
   })
 }
 
-function novaPiscina() {
-  form.value = clonar(FORM_VAZIO)
-  formAberto.value = true
-  erro.value = ''
-}
-
-function editarPiscina(piscina) {
-  form.value = {
+// A resposta traz descrições de enum e os dispositivos "informados"; o formulário usa os nomes.
+function formDaPiscina(piscina) {
+  return {
     id: piscina.id,
-    // A resposta traz a descrição do enum; o select trabalha com o nome.
     nome: piscina.nome,
     tipoUso: tipoUsoPorDescricao(piscina.tipoUso),
     larguraM: piscina.larguraM,
@@ -886,8 +875,18 @@ function editarPiscina(piscina) {
       })),
     })),
   }
-  formAberto.value = true
-  erro.value = ''
+}
+
+// usarComprimentoManual é só da tela. No manual, a lista de conexões não entra no
+// cálculo — o backend soma lEquivalenteAdicionalM sozinho, sem reforço duplicado.
+function corpoDaPiscina(campos) {
+  return {
+    ...campos,
+    trechos: campos.trechos.map(({ usarComprimentoManual, conexoes, ...resto }) => ({
+      ...resto,
+      conexoes: usarComprimentoManual ? [] : conexoes,
+    })),
+  }
 }
 
 function tipoUsoPorDescricao(descricao) {
@@ -911,92 +910,24 @@ function sentidoPorDescricao(descricao) {
   return entrada?.[0] ?? 'SUCCAO'
 }
 
-function cancelar() {
-  formAberto.value = false
-  form.value = clonar(FORM_VAZIO)
-  erro.value = ''
-}
-
 async function carregarTudo() {
   carregando.value = true
   try {
-    const [dadosEmpreendimento, dadosReferencias, dadosPiscinas] = await Promise.all([
+    const [dadosEmpreendimento, dadosReferencias] = await Promise.all([
       empreendimentoService.buscarPorId(props.id),
       piscinaService.referencias(),
-      piscinaService.listarPorEmpreendimento(props.id),
     ])
     empreendimento.value = dadosEmpreendimento
     referencias.value = dadosReferencias
-    piscinas.value = dadosPiscinas
   } catch {
-    erro.value = 'Não foi possível carregar os dados das piscinas.'
+    calc.erro = 'Não foi possível carregar os dados das piscinas.'
   } finally {
     carregando.value = false
   }
 }
 
-async function handleSalvar() {
-  erro.value = ''
-  salvando.value = true
-
-  const { id, ...dados } = form.value
-  const corpo = {
-    ...dados,
-    empreendimentoId: Number(props.id),
-    // usarComprimentoManual é só da tela. No manual, a lista de conexões não entra no
-    // cálculo — o backend soma lEquivalenteAdicionalM sozinho, sem reforço duplicado.
-    trechos: dados.trechos.map(({ usarComprimentoManual, conexoes, ...resto }) => ({
-      ...resto,
-      conexoes: usarComprimentoManual ? [] : conexoes,
-    })),
-  }
-
-  try {
-    if (id) {
-      await piscinaService.atualizar(id, corpo)
-    } else {
-      await piscinaService.criar(corpo)
-    }
-    piscinas.value = await piscinaService.listarPorEmpreendimento(props.id)
-    cancelar()
-  } catch (error) {
-    erro.value = error.response?.data?.mensagem ?? 'Não foi possível calcular a piscina.'
-  } finally {
-    salvando.value = false
-  }
-}
-
-async function handleBaixarMemorial(piscina) {
-  erro.value = ''
-  try {
-    const blob = await piscinaService.baixarMemorialPdf(piscina.id)
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `memorial-${piscina.nome.replace(/[^\w-]+/g, '-')}.pdf`
-    link.click()
-    URL.revokeObjectURL(url)
-  } catch {
-    erro.value = 'Não foi possível gerar o memorial em PDF.'
-  }
-}
-
-async function handleExcluir(piscina) {
-  erro.value = ''
-  removendo.value = true
-
-  try {
-    await piscinaService.excluir(piscina.id)
-    // O formulário pode estar aberto justamente sobre a piscina removida.
-    if (form.value.id === piscina.id) cancelar()
-    piscinas.value = await piscinaService.listarPorEmpreendimento(props.id)
-    paraRemover.value = null
-  } catch {
-    erro.value = 'Não foi possível remover a piscina.'
-  } finally {
-    removendo.value = false
-  }
-}
-
-onMounted(carregarTudo)
+onMounted(() => {
+  carregarTudo()
+  calc.carregar()
+})
 </script>

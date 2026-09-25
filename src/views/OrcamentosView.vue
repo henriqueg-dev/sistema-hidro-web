@@ -281,6 +281,7 @@ import * as orcamentoService from '@/services/orcamentoService'
 import * as auditoriaService from '@/services/auditoriaService'
 import { TIPOS_EMPREENDIMENTO, STATUS_ORCAMENTO, CONCESSIONARIAS, ACOES_AUDITORIA } from '@/constants/opcoes'
 import { formatarDataHora } from '@/utils/formato'
+import { baixarArquivo } from '@/utils/arquivo'
 
 const route = useRoute()
 const router = useRouter()
@@ -542,13 +543,7 @@ async function handleExcluir(orc) {
 async function handleBaixarPdf(orc) {
   erro.value = ''
   try {
-    const blob = await orcamentoService.baixarPdf(orc.id)
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `orcamento-${orc.id}.pdf`
-    link.click()
-    URL.revokeObjectURL(url)
+    baixarArquivo(await orcamentoService.baixarPdf(orc.id), `orcamento-${orc.id}.pdf`)
   } catch {
     erro.value = 'Não foi possível gerar o PDF do orçamento.'
   }

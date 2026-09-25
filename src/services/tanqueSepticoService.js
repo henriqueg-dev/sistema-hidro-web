@@ -1,25 +1,4 @@
-import api from '@/services/api'
+import { criarServicoCalculo } from '@/services/calculoService'
 
-export function criar(dados) {
-  return api.post('/api/tanques-septicos', dados).then((response) => response.data)
-}
-
-export function atualizar(id, dados) {
-  return api.put(`/api/tanques-septicos/${id}`, dados).then((response) => response.data)
-}
-
-export function excluir(id) {
-  return api.delete(`/api/tanques-septicos/${id}`).then((response) => response.data)
-}
-
-export function listarPorEmpreendimento(empreendimentoId) {
-  return api
-    .get(`/api/tanques-septicos/empreendimento/${empreendimentoId}`)
-    .then((response) => response.data)
-}
-
-export function baixarMemorialPdf(id) {
-  return api
-    .get(`/api/tanques-septicos/${id}/memorial.pdf`, { responseType: 'blob' })
-    .then((response) => response.data)
-}
+export const { criar, atualizar, excluir, listarPorEmpreendimento, baixarMemorialPdf } =
+  criarServicoCalculo('tanques-septicos')
