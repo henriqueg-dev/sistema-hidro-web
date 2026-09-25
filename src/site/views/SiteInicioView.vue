@@ -78,7 +78,7 @@
     <section class="site-secao clara">
       <div class="site-container">
         <header class="site-secao-cabecalho" v-revelar>
-          <h2>Quatro sistemas da instalação, oito cálculos</h2>
+          <h2>Os cálculos de cada sistema da instalação</h2>
           <p>
             Cada cálculo mostra a fórmula, a origem de cada valor e os limites da norma que ele
             confere antes de dar o resultado.
@@ -139,7 +139,7 @@
             documento pronto para anexar ao projeto.
           </p>
           <ul class="site-lista-marcas">
-            <li>Um memorial para cada um dos oito cálculos.</li>
+            <li>Um memorial para cada cálculo.</li>
             <li>Gerado na hora, sempre com os valores salvos mais recentes.</li>
             <li>Sem limite de memoriais em nenhum plano.</li>
           </ul>

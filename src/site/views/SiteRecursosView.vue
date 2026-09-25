@@ -46,9 +46,8 @@
         <div class="site-dupla-texto" v-revelar>
           <h2>Memoriais de cálculo em PDF</h2>
           <p>
-            Cada um dos oito cálculos gera o próprio memorial, com cliente, empreendimento, dados de
-            entrada e resultado. O rodapé lembra que a validação técnica é do responsável pelo
-            projeto.
+            Cada cálculo gera o próprio memorial, com cliente, empreendimento, dados de entrada e
+            resultado. O rodapé lembra que a validação técnica é do responsável pelo projeto.
           </p>
           <ul class="site-lista-marcas">
             <li>Baixado direto da lista de cálculos do empreendimento.</li>
