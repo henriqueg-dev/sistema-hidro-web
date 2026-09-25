@@ -223,6 +223,8 @@ import CalculoCaixaGordura from '@/components/calculos/CalculoCaixaGordura.vue'
 import CalculoVazaoPredial from '@/components/calculos/CalculoVazaoPredial.vue'
 import CalculoTanqueSeptico from '@/components/calculos/CalculoTanqueSeptico.vue'
 import CalculoRamalPredial from '@/components/calculos/CalculoRamalPredial.vue'
+import CalculoRecalque from '@/components/calculos/CalculoRecalque.vue'
+import CalculoSumidouro from '@/components/calculos/CalculoSumidouro.vue'
 import * as empreendimentoService from '@/services/empreendimentoService'
 import { TIPOS_EMPREENDIMENTO, CONCESSIONARIAS } from '@/constants/opcoes'
 
@@ -252,10 +254,22 @@ const CALCULOS = [
     componente: CalculoRamalPredial,
   },
   {
+    id: 'recalque',
+    nome: 'Recalque',
+    descricao: 'Bomba do reservatório inferior ao superior: diâmetros, altura manométrica e potência.',
+    componente: CalculoRecalque,
+  },
+  {
     id: 'tanque-septico',
     nome: 'Tanque séptico',
     descricao: 'Volume útil e dimensões internas, a partir das unidades de contribuição.',
     componente: CalculoTanqueSeptico,
+  },
+  {
+    id: 'sumidouro',
+    nome: 'Sumidouro',
+    descricao: 'Área de infiltração e altura útil a partir da taxa de percolação do solo.',
+    componente: CalculoSumidouro,
   },
   {
     // Abre em tela própria: o dimensionamento tem trechos e conexões, que não

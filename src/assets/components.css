@@ -1533,6 +1533,15 @@ a.indicador:hover {
   border-radius: 8px;
 }
 
+/* Dentro do formulário de cálculo o fundo já é azul-claro. */
+.form-destaque .conexoes {
+  background: var(--color-surface);
+}
+
+.form-destaque .trecho-editor {
+  background: var(--color-bg);
+}
+
 .conexao-linha + .conexao-linha {
   margin-top: 0.75rem;
 }

@@ -1,5 +1,10 @@
 import { reactive } from 'vue'
 
+// Cópia profunda: formulários com listas (conexões) não podem dividir arrays entre si.
+function copiar(valor) {
+  return JSON.parse(JSON.stringify(valor))
+}
+
 /**
  * Estado e CRUD de um cálculo que fica registrado no empreendimento.
  * `service` precisa expor listarPorEmpreendimento, criar, atualizar e excluir;
@@ -9,7 +14,7 @@ export function useCalculos(service, empreendimentoId, formVazio, opcoes = {}) {
   const estado = reactive({
     itens: [],
     carregando: false,
-    form: { ...formVazio },
+    form: copiar(formVazio),
     formAberto: false,
     salvando: false,
     paraRemover: null,
@@ -38,15 +43,15 @@ export function useCalculos(service, empreendimentoId, formVazio, opcoes = {}) {
     },
 
     novo() {
-      estado.form = { ...formVazio }
+      estado.form = copiar(formVazio)
       estado.formAberto = true
       estado.paraRemover = null
       estado.erro = ''
     },
 
     editar(item) {
-      estado.form = Object.fromEntries(
-        Object.keys(formVazio).map((campo) => [campo, item[campo]]),
+      estado.form = copiar(
+        Object.fromEntries(Object.keys(formVazio).map((campo) => [campo, item[campo]])),
       )
       estado.formAberto = true
       estado.paraRemover = null
@@ -63,7 +68,7 @@ export function useCalculos(service, empreendimentoId, formVazio, opcoes = {}) {
 
     cancelar() {
       estado.formAberto = false
-      estado.form = { ...formVazio }
+      estado.form = copiar(formVazio)
       estado.erro = ''
     },
 
