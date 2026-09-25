@@ -240,6 +240,13 @@
   color: rgba(255, 255, 255, 0.86);
 }
 
+.site-topo p a {
+  font-weight: 700;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .site-topo {
   padding: 4.5rem 0 4rem;
 }

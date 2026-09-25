@@ -78,10 +78,10 @@
     <section class="site-secao clara">
       <div class="site-container">
         <header class="site-secao-cabecalho" v-revelar>
-          <h2>Os cálculos de cada sistema da instalação</h2>
+          <h2>Alguns dos cálculos de cada sistema da instalação</h2>
           <p>
             Cada cálculo mostra a fórmula, a origem de cada valor e os limites da norma que ele
-            confere antes de dar o resultado.
+            confere antes de dar o resultado. Se precisar de outro, podemos adicionar.
           </p>
         </header>
 

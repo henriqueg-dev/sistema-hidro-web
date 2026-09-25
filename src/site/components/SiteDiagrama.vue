@@ -66,7 +66,6 @@
     <figcaption class="site-legenda">
       <span class="site-legenda-agua">Água fria</span>
       <span class="site-legenda-esgoto">Esgoto sanitário</span>
-      <span>Toque num nome para ver o cálculo</span>
     </figcaption>
   </figure>
 </template>

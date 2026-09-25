@@ -4,8 +4,10 @@
       <div class="site-container">
         <h1>Cálculos</h1>
         <p>
-          Oito dimensionamentos da instalação hidrossanitária, com as fórmulas que o sistema
-          executa, os dados que cada um pede e as verificações da norma feitas antes do resultado.
+          Alguns dos dimensionamentos da instalação hidrossanitária disponíveis no sistema, com os
+          dados que cada um pede e as verificações da norma feitas antes do resultado. Precisa de
+          outro cálculo? <RouterLink :to="{ name: 'site-contato' }">Fale com a gente</RouterLink> e
+          podemos adicioná-lo.
         </p>
         <ul class="site-normas">
           <li v-for="norma in NORMAS" :key="norma">{{ norma }}</li>
@@ -68,9 +70,6 @@
                 </ul>
               </div>
             </div>
-
-            <h4>Memória de cálculo</h4>
-            <pre class="site-formula">{{ calculo.memoria }}</pre>
           </article>
         </section>
 
