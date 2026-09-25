@@ -364,15 +364,36 @@ a.btn-link {
   background: #f0fdf4;
 }
 
-.msg.aviso-global {
+.popups-erro {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2000;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 0 0 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: min(380px, calc(100vw - 2rem));
+  pointer-events: none;
 }
 
-.msg.aviso-global .btn-link {
+.popup-erro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #fecaca;
+  border-left: 4px solid var(--color-danger);
+  border-radius: 8px;
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  font-size: 0.88rem;
+  box-shadow: var(--shadow-md);
+  overflow-wrap: anywhere;
+  pointer-events: auto;
+}
+
+.popup-erro .btn-link {
   color: inherit;
   font-size: 1.1rem;
   line-height: 1;
