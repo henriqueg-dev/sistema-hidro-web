@@ -5,7 +5,9 @@
       <div class="painel em-linha">
         <div class="painel-item">
           <span>Plano</span>
-          <strong>{{ assinatura.plano ? rotuloPlano(assinatura.plano) : 'Nenhum plano escolhido' }}</strong>
+          <strong>{{
+            assinatura.plano ? rotuloPlano(assinatura.plano) : 'Nenhum plano escolhido'
+          }}</strong>
         </div>
         <div class="painel-item">
           <span>Situação</span>
@@ -22,19 +24,28 @@
 
     <div class="card" v-if="cobranca">
       <h2>Pague com PIX para ativar</h2>
-      <p class="subtitle">Escaneie o QR code ou copie o código abaixo no app do seu banco.</p>
+      <p class="subtitle">
+        Plano {{ rotuloPlano(cobranca.plano) }} —
+        {{ formatarPreco(buscarPlano(cobranca.plano)?.precoCentavos) }}/mês. Escaneie o QR code ou
+        copie o código abaixo no app do seu banco.
+      </p>
       <img class="pix-qrcode" :src="cobranca.brCodeBase64" alt="QR code PIX" />
       <div class="form-linha">
         <div class="field amplo">
-          <input type="text" readonly :value="cobranca.brCode" aria-label="Código PIX copia e cola" />
+          <input
+            type="text"
+            readonly
+            :value="cobranca.brCode"
+            aria-label="Código PIX copia e cola"
+          />
         </div>
         <div class="field actions">
           <button type="button" class="btn-secundario" @click="copiarCodigo">Copiar código</button>
         </div>
       </div>
       <p class="texto-secundario">
-        Assim que o pagamento for confirmado, a assinatura é ativada automaticamente — clique em
-        "Já paguei" para atualizar.
+        Assim que o pagamento for confirmado, a assinatura é ativada automaticamente — clique em "Já
+        paguei" para atualizar.
       </p>
       <div class="card-acoes">
         <button type="button" @click="carregarStatus">Já paguei, atualizar status</button>
@@ -48,15 +59,23 @@
       </p>
 
       <div class="planos-grade">
-        <div v-for="plano in planos" :key="plano.valor" class="card plano-card">
-          <h2>{{ plano.nome }}</h2>
+        <div
+          v-for="plano in planos"
+          :key="plano.valor"
+          class="card plano-card"
+          :class="{ 'em-uso': plano.valor === planoEmUso }"
+        >
+          <h2>
+            {{ plano.nome }}
+            <span v-if="plano.valor === planoEmUso" class="badge">Em uso</span>
+          </h2>
           <p class="plano-preco">{{ formatarPreco(plano.precoCentavos) }}<span>/mês</span></p>
           <ul class="plano-lista">
             <li>{{ plano.usuarios }}</li>
             <li>{{ plano.assistente }}</li>
           </ul>
           <button type="button" :disabled="gerando" @click="handleGerarCobranca(plano.valor)">
-            {{ gerando ? 'Gerando...' : 'Assinar' }}
+            {{ gerando ? 'Gerando...' : plano.valor === planoEmUso ? 'Renovar' : 'Assinar' }}
           </button>
         </div>
       </div>
@@ -64,8 +83,8 @@
 
     <div class="card" v-else>
       <p class="msg aviso">
-        A assinatura do escritório está {{ rotuloStatus(assinatura?.status).toLowerCase() }}.
-        Peça para um administrador regularizar o pagamento.
+        A assinatura do escritório está {{ rotuloStatus(assinatura?.status).toLowerCase() }}. Peça
+        para um administrador regularizar o pagamento.
       </p>
     </div>
 
@@ -78,33 +97,14 @@ import { computed, onMounted, ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
 import { useAuthStore } from '@/stores/auth'
 import * as assinaturaService from '@/services/assinaturaService'
-
-const PLANOS = [
-  {
-    valor: 'STARTER',
-    nome: 'Starter',
-    precoCentavos: 4900,
-    usuarios: 'Até 2 usuários',
-    assistente: 'Sem assistente de IA',
-  },
-  {
-    valor: 'PROFISSIONAL',
-    nome: 'Profissional',
-    precoCentavos: 9900,
-    usuarios: 'Até 5 usuários',
-    assistente: 'Assistente de IA — 300 mensagens/mês',
-  },
-  {
-    valor: 'ESCRITORIO',
-    nome: 'Escritório',
-    precoCentavos: 19900,
-    usuarios: 'Usuários ilimitados',
-    assistente: 'Assistente de IA ilimitado',
-  },
-]
+import { PLANOS } from '@/constants/opcoes'
 
 const authStore = useAuthStore()
 const ehAdmin = computed(() => authStore.perfil === 'ADMIN')
+// Plano de assinatura vencida não conta como em uso.
+const planoEmUso = computed(() =>
+  assinatura.value?.status === 'ATIVA' ? buscarPlano(assinatura.value.plano)?.valor : null,
+)
 
 const assinatura = ref(null)
 const cobranca = ref(null)
@@ -130,7 +130,8 @@ async function handleGerarCobranca(plano) {
   erro.value = ''
   gerando.value = true
   try {
-    cobranca.value = await assinaturaService.gerarCobranca(plano)
+    // O plano só vira o atual depois do pagamento; guarda qual está sendo cobrado.
+    cobranca.value = { ...(await assinaturaService.gerarCobranca(plano)), plano }
   } catch (error) {
     erro.value = error.response?.data?.mensagem ?? 'Não foi possível gerar a cobrança.'
   } finally {
@@ -142,12 +143,19 @@ function copiarCodigo() {
   navigator.clipboard?.writeText(cobranca.value.brCode)
 }
 
+// A API devolve o plano pelo nome ("Profissional"); a cobrança guarda o código ("PROFISSIONAL").
+function buscarPlano(valor) {
+  return planos.find((p) => p.valor === valor || p.nome === valor)
+}
+
 function rotuloPlano(valor) {
-  return planos.find((p) => p.valor === valor)?.nome ?? valor
+  return buscarPlano(valor)?.nome ?? valor
 }
 
 function rotuloStatus(status) {
-  return { ATIVA: 'Ativa', EXPIRADA: 'Vencida', PENDENTE: 'Pendente de pagamento' }[status] ?? status
+  return (
+    { ATIVA: 'Ativa', EXPIRADA: 'Vencida', PENDENTE: 'Pendente de pagamento' }[status] ?? status
+  )
 }
 
 function classeStatus(status) {

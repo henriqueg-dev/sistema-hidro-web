@@ -1,8 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { ROTAS_SITE, rolagemSite } from '@/site/rotas'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  // Só o site rola sozinho; no sistema, trocar de aba pela query não pode mexer na rolagem.
+  scrollBehavior(to, from, posicaoSalva) {
+    return to.meta.site ? rolagemSite(to, from, posicaoSalva) : false
+  },
   routes: [
     {
       path: '/login',
@@ -16,6 +21,7 @@ const router = createRouter({
       component: () => import('@/views/DefinirSenhaView.vue'),
       meta: { public: true },
     },
+    ROTAS_SITE,
     {
       path: '/assinatura',
       name: 'assinatura',

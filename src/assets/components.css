@@ -470,6 +470,18 @@ a.btn-link {
   flex-direction: column;
 }
 
+.plano-card.em-uso {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.plano-card h2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .plano-preco {
   font-size: 1.5rem;
   font-weight: 700;

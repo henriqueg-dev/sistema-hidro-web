@@ -109,3 +109,28 @@ export const ACOES_AUDITORIA = {
   ALTERACAO: 'Alteração',
   EXCLUSAO: 'Exclusão',
 }
+
+// Planos de assinatura: mostrados na tela de Assinatura e no site de apresentação.
+export const PLANOS = [
+  {
+    valor: 'STARTER',
+    nome: 'Starter',
+    precoCentavos: 7990,
+    usuarios: 'Até 2 usuários',
+    assistente: 'Sem assistente de IA',
+  },
+  {
+    valor: 'PROFISSIONAL',
+    nome: 'Profissional',
+    precoCentavos: 14990,
+    usuarios: 'Até 5 usuários',
+    assistente: 'Assistente de IA — 300 mensagens/mês',
+  },
+  {
+    valor: 'ESCRITORIO',
+    nome: 'Escritório',
+    precoCentavos: 24990,
+    usuarios: 'Usuários ilimitados',
+    assistente: 'Assistente de IA ilimitado',
+  },
+]
