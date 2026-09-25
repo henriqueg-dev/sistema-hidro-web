@@ -223,23 +223,54 @@
 }
 
 .login-page {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   padding: 1.5rem;
-  background: radial-gradient(circle at top left, #e0eaff 0%, var(--color-bg) 55%);
+  /* planta técnica noturna: marinho mais escuro que o azul da marca, para o painel se destacar */
+  background-color: #0a1a47;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* O login não rola: sem isso sobra uma faixa clara reservada à barra de rolagem. */
+html:has(.login-page) {
+  scrollbar-gutter: auto;
+  background: #0a1a47;
+}
+
+/* Brilhos de cor que derivam devagar por trás da rede. */
+.login-page::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.55), transparent 35%),
+    radial-gradient(circle at 80% 30%, rgba(14, 165, 233, 0.3), transparent 30%),
+    radial-gradient(circle at 75% 80%, rgba(245, 158, 11, 0.22), transparent 32%),
+    radial-gradient(circle at 25% 85%, rgba(99, 102, 241, 0.3), transparent 30%);
+  pointer-events: none;
 }
 
 .login-panel {
+  position: relative;
+  z-index: 1;
   display: flex;
   width: 100%;
   max-width: 880px;
   min-height: 520px;
   background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    0 0 0 6px rgba(255, 255, 255, 0.04);
 }
 
 .brand-side {
@@ -249,7 +280,15 @@
   justify-content: center;
   padding: 3rem 2.5rem;
   /* cor exata do fundo de hidros-negativo.png, para o PNG se fundir ao painel */
-  background: #0f47c4;
+  background-color: #0f47c4;
+  background-image:
+    radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.16), transparent 45%),
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size:
+    auto,
+    32px 32px,
+    32px 32px;
   color: #fff;
 }
 
@@ -266,12 +305,14 @@
   height: auto;
   /* o PNG tem margem interna larga; o recuo compensa e alinha com o texto */
   margin-left: -1.5rem;
+  /* o fundo azul do PNG some e deixa o quadriculado do painel aparecer */
+  mix-blend-mode: lighten;
 }
 
 .brand-content p {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.86);
 }
 
 .form-side {
@@ -291,9 +332,23 @@
 }
 
 .login-card h2 {
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--color-text);
+}
+
+.login-card button[type='submit'] {
+  padding: 0.8rem 1.4rem;
+  transition:
+    background-color 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.login-card button[type='submit']:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .login-card label {
@@ -333,6 +388,206 @@
   text-decoration: underline;
 }
 
+/* Rede de tubulação animada atrás do painel (LoginFundo.vue). */
+
+.login-fundo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.login-fundo .tubo {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.login-fundo .tubo.agua {
+  stroke: rgba(255, 255, 255, 0.16);
+}
+
+.login-fundo .tubo.esgoto {
+  stroke: rgba(252, 211, 77, 0.22);
+}
+
+.login-fundo .fluxo {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 4 14;
+}
+
+.login-fundo .fluxo.agua {
+  stroke: #bfdbfe;
+}
+
+.login-fundo .fluxo.esgoto {
+  stroke: #fcd34d;
+}
+
+.login-fundo :is(.reservatorio, .caixa-esgoto, .peca) {
+  stroke-width: 2;
+}
+
+.login-fundo :is(.reservatorio, .peca) {
+  fill: rgba(147, 197, 253, 0.15);
+  stroke: rgba(255, 255, 255, 0.6);
+}
+
+.login-fundo :is(.caixa-esgoto, .peca.esgoto) {
+  fill: rgba(252, 211, 77, 0.14);
+  stroke: #fcd34d;
+}
+
+.login-fundo .no circle {
+  fill: #0a1a47;
+  stroke-width: 2.5;
+}
+
+.login-fundo .no.agua circle {
+  stroke: #fff;
+}
+
+.login-fundo .no.esgoto circle {
+  stroke: #fcd34d;
+}
+
+.login-fundo .no .pulso {
+  fill: none;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.login-fundo .leitura rect {
+  fill: rgba(10, 26, 71, 0.7);
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+.login-fundo .leitura .rotulo {
+  fill: rgba(255, 255, 255, 0.65);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.login-fundo .leitura .valor {
+  fill: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.login-fundo .ao-vivo.agua {
+  fill: #93c5fd;
+}
+
+.login-fundo .ao-vivo.esgoto {
+  fill: #fcd34d;
+}
+
+/* Entrada escalonada, como no topo do site. */
+@media (prefers-reduced-motion: no-preference) {
+  .login-panel {
+    animation: login-surgir 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  :is(.brand-content, .login-card) > * {
+    animation: login-surgir 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+  }
+
+  :is(.brand-content, .login-card) > :nth-child(2) {
+    animation-delay: 0.25s;
+  }
+
+  :is(.brand-content, .login-card) > :nth-child(n + 3) {
+    animation-delay: 0.35s;
+  }
+
+  /* A rede se desenha, a água começa a correr e as leituras entram, como no diagrama do site. */
+  .login-fundo .tubo {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: login-tubo 1.2s ease-out var(--atraso, 0s) forwards;
+  }
+
+  .login-fundo .fluxo {
+    opacity: 0;
+    animation:
+      login-aparecer 0.6s ease-out 1.8s forwards,
+      login-fluxo 1.1s linear infinite;
+  }
+
+  .login-fundo .no .pulso {
+    animation: login-pulso 2.8s ease-out var(--atraso, 0s) infinite;
+  }
+
+  .login-fundo .leitura {
+    opacity: 0;
+    animation: login-aparecer 0.6s ease-out var(--atraso, 1.4s) forwards;
+  }
+
+  .login-fundo .ao-vivo {
+    animation: login-piscar 1.6s ease-in-out infinite;
+  }
+
+  .login-page::before {
+    animation: login-deriva 24s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes login-deriva {
+  to {
+    transform: translate(6%, -4%) rotate(8deg);
+  }
+}
+
+@keyframes login-tubo {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes login-fluxo {
+  to {
+    stroke-dashoffset: -36;
+  }
+}
+
+@keyframes login-aparecer {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes login-pulso {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+
+@keyframes login-piscar {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes login-surgir {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
 @media (max-width: 900px) {
   .layout {
     --largura-menu: 190px;
@@ -365,5 +620,9 @@
 
   .brand-content {
     max-width: none;
+  }
+
+  .login-fundo .leitura {
+    display: none;
   }
 }

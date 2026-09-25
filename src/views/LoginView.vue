@@ -1,5 +1,6 @@
 <template>
   <div class="login-page">
+    <LoginFundo />
     <div class="login-panel">
       <section class="brand-side">
         <div class="brand-content">
@@ -59,6 +60,7 @@
 </template>
 
 <script setup>
+import LoginFundo from '@/components/LoginFundo.vue'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
