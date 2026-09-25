@@ -218,9 +218,9 @@ const calc = useCalculos(
   props.empreendimento.id,
   {
     id: null,
-    taxaOcupacao: 4,
-    numUnidades: null,
-    consumoPerCapita: 150,
+    taxaOcupacao: props.empreendimento.taxaOcupacao ?? 4,
+    numUnidades: props.empreendimento.numUnidades,
+    consumoPerCapita: props.empreendimento.consumoPerCapita ?? 150,
     tempoReposicaoH: null,
     velocidadeMaximaMs: null,
     hidrometroInformado: null,

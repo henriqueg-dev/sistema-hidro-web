@@ -72,7 +72,11 @@ const props = defineProps({
 const calc = useCalculos(
   caixaGorduraService,
   props.empreendimento.id,
-  { id: null, taxaOcupacao: 4, numApartamentos: null },
+  {
+    id: null,
+    taxaOcupacao: props.empreendimento.taxaOcupacao ?? 4,
+    numApartamentos: props.empreendimento.numUnidades,
+  },
   { max: MAX_POR_EMPREENDIMENTO },
 )
 

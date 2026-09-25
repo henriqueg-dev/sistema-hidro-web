@@ -272,6 +272,7 @@ button.btn.acao-solta {
 
 .filtro-grupo {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
@@ -1341,6 +1342,14 @@ button.btn.acao-solta {
   padding: 0.75rem 1rem;
   border: 1px solid var(--color-border);
   border-radius: 8px;
+}
+
+.card h2 + .bloco-tabela {
+  margin-top: 0;
+}
+
+.bloco-tabela + .bloco-tabela {
+  margin-top: 0.75rem;
 }
 
 .bloco-tabela summary {

@@ -259,8 +259,8 @@ const calc = useCalculos(
   {
     id: null,
     contribuicaoDespejo: 'RESIDENCIA_PADRAO_MEDIO',
-    taxaOcupacao: 4,
-    numUnidades: null,
+    taxaOcupacao: props.empreendimento.taxaOcupacao ?? 4,
+    numUnidades: props.empreendimento.numUnidades,
     faixaTemperatura: 'DE_10_A_20',
     intervaloLimpezaAnos: 1,
     formaTanque: 'PRISMATICO_RETANGULAR',

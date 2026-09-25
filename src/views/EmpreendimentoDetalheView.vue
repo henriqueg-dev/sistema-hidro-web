@@ -80,6 +80,32 @@
             </select>
           </div>
 
+          <p class="subtitle inteiro">
+            Dados de projeto (opcionais): já vêm preenchidos nos formulários de cálculo.
+          </p>
+
+          <div class="field estreito">
+            <label for="unidadesEdicao">
+              Unidades&nbsp;<span class="dica" title="Apartamentos, no caso de prédio.">?</span>
+            </label>
+            <input id="unidadesEdicao" v-model.number="form.numUnidades" type="number" min="1" />
+          </div>
+
+          <div class="field estreito">
+            <label for="taxaOcupacaoEdicao">Habitantes por unidade</label>
+            <input
+              id="taxaOcupacaoEdicao"
+              v-model.number="form.taxaOcupacao"
+              type="number"
+              min="1"
+            />
+          </div>
+
+          <div class="field">
+            <label for="consumoEdicao">Consumo per capita (L/hab·dia)</label>
+            <input id="consumoEdicao" v-model.number="form.consumoPerCapita" type="number" min="1" />
+          </div>
+
           <div class="field actions">
             <button type="submit" :disabled="salvando">
               {{ salvando ? 'Salvando...' : 'Salvar' }}
@@ -124,6 +150,29 @@
           </div>
         </div>
 
+        <h2 v-if="!editando" class="titulo-secundario">Dados de projeto</h2>
+        <p v-if="!editando" class="subtitle">
+          Já vêm preenchidos nos formulários de cálculo; cada cálculo pode usar outro valor.
+        </p>
+        <div v-if="!editando" class="painel em-linha">
+          <div class="painel-item">
+            <span>Unidades</span>
+            <strong>{{ empreendimento.numUnidades ?? '—' }}</strong>
+          </div>
+          <div class="painel-item">
+            <span>Habitantes por unidade</span>
+            <strong>{{ empreendimento.taxaOcupacao ?? '—' }}</strong>
+          </div>
+          <div class="painel-item">
+            <span>Consumo per capita</span>
+            <strong>
+              {{
+                empreendimento.consumoPerCapita ? `${empreendimento.consumoPerCapita} L/hab·dia` : '—'
+              }}
+            </strong>
+          </div>
+        </div>
+
         <p v-if="erroEdicao" class="msg erro">{{ erroEdicao }}</p>
         <p v-if="sucessoEdicao" class="msg sucesso">{{ sucessoEdicao }}</p>
       </section>
@@ -151,6 +200,12 @@
               <span>{{ calculo.descricao }}</span>
             </button>
           </div>
+
+          <p v-if="!temDadosDeProjeto" class="msg aviso">
+            Preencha os dados de projeto na aba
+            <button type="button" class="btn-link" @click="trocarAba('dados')">Dados</button> para
+            que unidades, habitantes e consumo já venham preenchidos nos cálculos.
+          </p>
         </section>
 
         <component :is="componenteAtivo" v-if="componenteAtivo" :empreendimento="empreendimento" />
@@ -233,6 +288,11 @@ const calculoAtivo = ref('')
 
 const abaAtiva = computed(() => (route.query.aba === 'dados' ? 'dados' : 'calculos'))
 
+const temDadosDeProjeto = computed(() => {
+  const { numUnidades, taxaOcupacao, consumoPerCapita } = empreendimento.value ?? {}
+  return numUnidades != null || taxaOcupacao != null || consumoPerCapita != null
+})
+
 const componenteAtivo = computed(
   () => CALCULOS.find((calculo) => calculo.id === calculoAtivo.value)?.componente,
 )
@@ -267,8 +327,26 @@ async function carregarEmpreendimento() {
 }
 
 function iniciarEdicao() {
-  const { nome, tipo, numPavimentos, endereco, concessionaria } = empreendimento.value
-  form.value = { nome, tipo, numPavimentos, endereco, concessionaria }
+  const {
+    nome,
+    tipo,
+    numPavimentos,
+    endereco,
+    concessionaria,
+    numUnidades,
+    taxaOcupacao,
+    consumoPerCapita,
+  } = empreendimento.value
+  form.value = {
+    nome,
+    tipo,
+    numPavimentos,
+    endereco,
+    concessionaria,
+    numUnidades,
+    taxaOcupacao,
+    consumoPerCapita,
+  }
   erroEdicao.value = ''
   sucessoEdicao.value = ''
   editando.value = true
@@ -287,6 +365,9 @@ async function handleSalvar() {
   try {
     empreendimento.value = await empreendimentoService.atualizar(props.id, {
       ...form.value,
+      numUnidades: opcional(form.value.numUnidades),
+      taxaOcupacao: opcional(form.value.taxaOcupacao),
+      consumoPerCapita: opcional(form.value.consumoPerCapita),
       clienteId: empreendimento.value.clienteId,
     })
     sucessoEdicao.value = 'Empreendimento atualizado com sucesso.'
@@ -297,6 +378,11 @@ async function handleSalvar() {
   } finally {
     salvando.value = false
   }
+}
+
+// Campo numérico apagado chega como texto vazio; a API espera ausência de valor.
+function opcional(valor) {
+  return valor === '' ? null : valor
 }
 
 onMounted(async () => {

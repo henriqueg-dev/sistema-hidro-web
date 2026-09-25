@@ -33,6 +33,7 @@
       <nav class="nav-links">
         <RouterLink to="/clientes" class="nav-link">Clientes</RouterLink>
         <RouterLink to="/prumadas" class="nav-link">Prumadas</RouterLink>
+        <RouterLink to="/tabelas" class="nav-link">Tabelas normativas</RouterLink>
         <RouterLink to="/assistente" class="nav-link">Assistente IA</RouterLink>
         <RouterLink v-if="authStore.perfil === 'ADMIN'" to="/orcamentos" class="nav-link">
           Orçamentos

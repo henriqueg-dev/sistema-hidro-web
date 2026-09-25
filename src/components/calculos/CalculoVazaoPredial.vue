@@ -193,9 +193,9 @@ const calc = useCalculos(
   props.empreendimento.id,
   {
     id: null,
-    taxaOcupacao: 4,
-    numApartamentos: null,
-    consumoPerCapita: 150,
+    taxaOcupacao: props.empreendimento.taxaOcupacao ?? 4,
+    numApartamentos: props.empreendimento.numUnidades,
+    consumoPerCapita: props.empreendimento.consumoPerCapita ?? 150,
     capacidadeEquivalenteDias: 1,
   },
   { max: MAX_POR_EMPREENDIMENTO, nomeArquivo: 'vazao-predial' },
