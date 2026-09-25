@@ -51,59 +51,61 @@
         <p v-if="carregandoLista" class="subtitle">Carregando...</p>
         <p v-else-if="!usuarios.length" class="subtitle">Nenhum usuário cadastrado ainda.</p>
 
-        <table v-else class="tabela">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>E-mail</th>
-              <th>Perfil</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="usuario in usuarios" :key="usuario.id">
-              <td>{{ usuario.nome }}</td>
-              <td>{{ usuario.email }}</td>
-              <td>
-                <span class="badge">{{ usuario.perfil }}</span>
-              </td>
-              <td>
-                <span
-                  class="status"
-                  :class="usuario.ativo ? 'ativo' : usuario.convitePendente ? 'aviso' : 'inativo'"
-                >
-                  {{
-                    usuario.ativo ? 'Ativo' : usuario.convitePendente ? 'Convite pendente' : 'Inativo'
-                  }}
-                </span>
-              </td>
-              <td class="acoes">
-                <button
-                  v-if="usuario.convitePendente"
-                  class="btn-link"
-                  :disabled="reenviando === usuario.id"
-                  @click="handleReenviarConvite(usuario)"
-                >
-                  {{ reenviando === usuario.id ? 'Reenviando...' : 'Reenviar convite' }}
-                </button>
-                <button
-                  v-else
-                  class="btn-link"
-                  :disabled="ehProprioUsuario(usuario) && usuario.ativo"
-                  :title="
-                    ehProprioUsuario(usuario) && usuario.ativo
-                      ? 'Você não pode desativar a própria conta'
-                      : ''
-                  "
-                  @click="alternarStatus(usuario)"
-                >
-                  {{ usuario.ativo ? 'Desativar' : 'Ativar' }}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div v-else class="tabela-rolagem">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Perfil</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="usuario in usuarios" :key="usuario.id">
+                <td>{{ usuario.nome }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>
+                  <span class="badge">{{ PERFIS[usuario.perfil] ?? usuario.perfil }}</span>
+                </td>
+                <td>
+                  <span
+                    class="status"
+                    :class="usuario.ativo ? 'ativo' : usuario.convitePendente ? 'aviso' : 'inativo'"
+                  >
+                    {{
+                      usuario.ativo ? 'Ativo' : usuario.convitePendente ? 'Convite pendente' : 'Inativo'
+                    }}
+                  </span>
+                </td>
+                <td class="acoes">
+                  <button
+                    v-if="usuario.convitePendente"
+                    class="btn-link"
+                    :disabled="reenviando === usuario.id"
+                    @click="handleReenviarConvite(usuario)"
+                  >
+                    {{ reenviando === usuario.id ? 'Reenviando...' : 'Reenviar convite' }}
+                  </button>
+                  <button
+                    v-else
+                    class="btn-link"
+                    :disabled="ehProprioUsuario(usuario) && usuario.ativo"
+                    :title="
+                      ehProprioUsuario(usuario) && usuario.ativo
+                        ? 'Você não pode desativar a própria conta'
+                        : ''
+                    "
+                    @click="alternarStatus(usuario)"
+                  >
+                    {{ usuario.ativo ? 'Desativar' : 'Ativar' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <p v-if="erroStatus" class="msg erro">{{ erroStatus }}</p>
       </section>
@@ -113,24 +115,20 @@
       <h2>Meus dados</h2>
       <p class="subtitle">Estes são os dados do seu acesso ao sistema.</p>
 
-      <table class="tabela">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Perfil</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ authStore.nome }}</td>
-            <td>{{ authStore.email }}</td>
-            <td>
-              <span class="badge">{{ authStore.perfil }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="painel em-linha">
+        <div class="painel-item">
+          <span>Nome</span>
+          <strong>{{ authStore.nome }}</strong>
+        </div>
+        <div class="painel-item amplo">
+          <span>E-mail</span>
+          <strong>{{ authStore.email }}</strong>
+        </div>
+        <div class="painel-item">
+          <span>Perfil</span>
+          <strong>{{ PERFIS[authStore.perfil] ?? authStore.perfil }}</strong>
+        </div>
+      </div>
 
       <h2 class="titulo-secundario">Alterar minha senha</h2>
 
@@ -184,7 +182,12 @@
           <button type="submit" :disabled="salvandoSenha">
             {{ salvandoSenha ? 'Salvando...' : 'Confirmar alteração' }}
           </button>
-          <button type="button" class="btn-link" :disabled="salvandoSenha" @click="cancelarAlteracaoSenha">
+          <button
+            type="button"
+            class="btn-secundario"
+            :disabled="salvandoSenha"
+            @click="cancelarAlteracaoSenha"
+          >
             Cancelar
           </button>
         </div>

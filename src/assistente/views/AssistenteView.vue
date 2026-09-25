@@ -41,7 +41,7 @@
 
       <section class="assistente-chat card">
         <div v-if="conversaAtual" class="card-header">
-          <div>
+          <div class="card-header-titulo">
             <h2>{{ conversaAtual.conversa.titulo }}</h2>
             <p v-if="conversaAtual.conversa.empreendimentoNome" class="subtitle">
               Contexto: {{ conversaAtual.conversa.empreendimentoNome }}

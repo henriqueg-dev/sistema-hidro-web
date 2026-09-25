@@ -34,9 +34,9 @@
       <p v-if="lista.erro" class="msg erro">{{ lista.erro }}</p>
       <p v-else-if="lista.carregando" class="subtitle">Carregando...</p>
       <p v-else-if="!lista.itens.length && lista.busca" class="subtitle">
-        Nenhum cliente encontrada para "{{ lista.busca }}".
+        Nenhum cliente encontrado para "{{ lista.busca }}".
       </p>
-      <p v-else-if="!lista.itens.length" class="subtitle">Nenhum cliente cadastrada ainda.</p>
+      <p v-else-if="!lista.itens.length" class="subtitle">Nenhum cliente cadastrado ainda.</p>
 
       <div v-else class="grade-cards">
         <CardItem

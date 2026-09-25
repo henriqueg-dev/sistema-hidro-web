@@ -27,24 +27,26 @@
         Nenhuma prumada ativa encontrada para esse tipo.
       </p>
 
-      <table v-if="listaPrumadas.length" class="tabela">
-        <thead>
-          <tr>
-            <th>Faixa de pavimentos</th>
-            <th>Desconector</th>
-            <th>Condição da sanca</th>
-            <th>Descrição</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="prumada in listaPrumadas" :key="prumada.id">
-            <td>{{ prumada.numPavimentos }}</td>
-            <td>{{ prumada.desconector }}</td>
-            <td>{{ prumada.condicaoSanca }}</td>
-            <td>{{ prumada.descricao }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-if="listaPrumadas.length" class="tabela-rolagem">
+        <table class="tabela">
+          <thead>
+            <tr>
+              <th>Faixa de pavimentos</th>
+              <th>Desconector</th>
+              <th>Condição da sanca</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="prumada in listaPrumadas" :key="prumada.id">
+              <td>{{ prumada.numPavimentos }}</td>
+              <td>{{ prumada.desconector }}</td>
+              <td>{{ prumada.condicaoSanca }}</td>
+              <td>{{ prumada.descricao }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </AppLayout>
 </template>

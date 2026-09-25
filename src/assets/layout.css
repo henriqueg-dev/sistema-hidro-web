@@ -207,6 +207,21 @@
   margin-bottom: 1.25rem;
 }
 
+/* Descrição da página, entre o título e o primeiro card. */
+.content > .subtitle {
+  max-width: 780px;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.page-title + .subtitle {
+  margin-top: -0.75rem;
+}
+
+.content > .msg {
+  margin: 0 0 1.25rem;
+}
+
 .login-page {
   display: flex;
   align-items: center;
@@ -302,6 +317,22 @@
   text-align: center;
 }
 
+.login-card .texto-secundario + .texto-secundario {
+  margin-top: 0.5rem;
+}
+
+.login-card .texto-secundario a,
+.login-card .texto-secundario .btn-link {
+  color: var(--color-primary);
+  font-size: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-card .texto-secundario a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 900px) {
   .layout {
     --largura-menu: 190px;
@@ -313,6 +344,16 @@
 }
 
 @media (max-width: 720px) {
+  .content,
+  .menu-oculto .content {
+    margin-left: 0;
+    padding: 4rem 1rem 1.5rem;
+  }
+
+  .sidebar {
+    box-shadow: var(--shadow-md);
+  }
+
   .login-panel {
     flex-direction: column;
     min-height: unset;

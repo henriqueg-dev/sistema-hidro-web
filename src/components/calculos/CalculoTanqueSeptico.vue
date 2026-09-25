@@ -73,18 +73,6 @@
             </div>
           </div>
 
-          <p v-if="item.vazaoAcimaDoMetodo" class="msg aviso">
-            A contribuição diária de {{ item.contribuicaoDiariaLitros }} L/dia passa do limite de
-            {{ item.vazaoMaximaLitrosDia }} L/dia previsto para este método de dimensionamento.
-            Acima disso, o sistema exige solução de tratamento de maior porte.
-          </p>
-
-          <p v-if="item.volumeMinimoAplicado" class="msg aviso">
-            A fórmula resultou em {{ item.volumeCalculadoLitros }} L, abaixo do mínimo admitido.
-            Adotado o volume útil mínimo de {{ item.volumeMinimoLitros }} L, que é também o volume
-            usado para dimensionar o tanque.
-          </p>
-
           <div class="calculo-secoes">
             <div class="calculo-secao">
               <h4>Parâmetros adotados</h4>
@@ -143,6 +131,18 @@
             </div>
           </div>
         </div>
+
+        <p v-if="item.vazaoAcimaDoMetodo" class="msg aviso">
+          A contribuição diária de {{ item.contribuicaoDiariaLitros }} L/dia passa do limite de
+          {{ item.vazaoMaximaLitrosDia }} L/dia previsto para este método de dimensionamento.
+          Acima disso, o sistema exige solução de tratamento de maior porte.
+        </p>
+
+        <p v-if="item.volumeMinimoAplicado" class="msg aviso">
+          A fórmula resultou em {{ item.volumeCalculadoLitros }} L, abaixo do mínimo admitido.
+          Adotado o volume útil mínimo de {{ item.volumeMinimoLitros }} L, que é também o volume
+          usado para dimensionar o tanque.
+        </p>
       </template>
 
       <template #form>

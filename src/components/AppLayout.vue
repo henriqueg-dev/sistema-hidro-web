@@ -53,7 +53,7 @@
           <div class="avatar">{{ authStore.nome?.[0]?.toUpperCase() }}</div>
           <div class="user-meta">
             <strong>{{ authStore.nome }}</strong>
-            <span>{{ authStore.perfil }}</span>
+            <span>{{ PERFIS[authStore.perfil] ?? authStore.perfil }}</span>
           </div>
         </div>
         <button class="logout-btn" @click="handleLogout">Sair</button>
@@ -88,6 +88,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { PERFIS } from '@/constants/opcoes'
 import { useRouter } from 'vue-router'
 
 const CHAVE_MENU = 'menuAberto'

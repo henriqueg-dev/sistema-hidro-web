@@ -266,7 +266,7 @@
           calcula a vazão necessária, os diâmetros das tubulações e quantos dispositivos instalar.
         </p>
 
-        <form @submit.prevent="handleSalvar">
+        <form class="pilha" @submit.prevent="handleSalvar">
           <div class="form-linha">
             <div class="field amplo">
               <label for="nome">Nome</label>
@@ -616,12 +616,14 @@
                 </div>
               </div>
 
-              <button type="button" class="btn-secundario" @click="adicionarConexao(trecho)">
-                Adicionar conexão
-              </button>
-              <span class="subtitle total-conexoes">
-                L equivalente do trecho: {{ formatar(lEquivalenteTrecho(trecho), 2) }} m
-              </span>
+              <div class="conexoes-rodape">
+                <button type="button" class="btn-secundario" @click="adicionarConexao(trecho)">
+                  Adicionar conexão
+                </button>
+                <span class="subtitle">
+                  L equivalente do trecho: {{ formatar(lEquivalenteTrecho(trecho), 2) }} m
+                </span>
+              </div>
             </div>
           </article>
 
@@ -631,7 +633,7 @@
 
           <p v-if="erro" class="msg erro">{{ erro }}</p>
 
-          <div class="form-linha acoes-form">
+          <div class="card-acoes">
             <button type="submit" class="btn-acao" :disabled="salvando">
               {{ salvando ? 'Calculando...' : 'Calcular e salvar' }}
             </button>

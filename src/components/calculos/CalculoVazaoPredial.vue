@@ -12,7 +12,7 @@
       descricao-vazio="Cadastre o cálculo de vazão predial deste empreendimento."
     >
       <template #registro="{ item }">
-        <div class="calculo-secoes">
+        <div class="calculo-secoes em-grade">
           <div class="calculo-secao">
             <h4>Parâmetros adotados</h4>
             <dl class="calculo-dados">

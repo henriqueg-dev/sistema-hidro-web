@@ -25,14 +25,20 @@
       <p class="subtitle">Escaneie o QR code ou copie o código abaixo no app do seu banco.</p>
       <img class="pix-qrcode" :src="cobranca.brCodeBase64" alt="QR code PIX" />
       <div class="form-linha">
-        <input class="field amplo" type="text" readonly :value="cobranca.brCode" />
-        <button type="button" class="btn-link" @click="copiarCodigo">Copiar código</button>
+        <div class="field amplo">
+          <input type="text" readonly :value="cobranca.brCode" aria-label="Código PIX copia e cola" />
+        </div>
+        <div class="field actions">
+          <button type="button" class="btn-secundario" @click="copiarCodigo">Copiar código</button>
+        </div>
       </div>
       <p class="texto-secundario">
         Assim que o pagamento for confirmado, a assinatura é ativada automaticamente — clique em
         "Já paguei" para atualizar.
       </p>
-      <button type="button" @click="carregarStatus">Já paguei, atualizar status</button>
+      <div class="card-acoes">
+        <button type="button" @click="carregarStatus">Já paguei, atualizar status</button>
+      </div>
     </div>
 
     <div class="card" v-else-if="ehAdmin">

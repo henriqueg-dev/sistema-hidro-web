@@ -27,55 +27,57 @@
       </p>
       <p v-else-if="!lista.itens.length" class="subtitle">Nenhuma alteração registrada.</p>
 
-      <table v-else class="tabela">
-        <thead>
-          <tr>
-            <th>Quando</th>
-            <th>Usuário</th>
-            <th>Alteração</th>
-            <th>Registro</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="revisao in lista.itens" :key="revisao.revisao">
-            <tr v-for="(alteracao, i) in revisao.alteracoes" :key="i">
-              <td v-if="i === 0" :rowspan="revisao.alteracoes.length">
-                {{ formatarDataHora(revisao.dataOperacao) }}
-              </td>
-              <td v-if="i === 0" :rowspan="revisao.alteracoes.length">
-                {{ revisao.usuarioNome ?? '—' }}
-                <small v-if="revisao.usuarioEmail" class="linha-secundaria">
-                  {{ revisao.usuarioEmail }}
-                </small>
-              </td>
-              <td>
-                <span class="badge" :class="`acao-${alteracao.acao.toLowerCase()}`">
-                  {{ ACOES_AUDITORIA[alteracao.acao] ?? alteracao.acao }}
-                </span>
-                <small v-for="campo in alteracao.campos" :key="campo" class="linha-secundaria">
-                  {{ campo }}
-                </small>
-              </td>
-              <td>
-                {{ alteracao.tipo }}
-                <small v-if="alteracao.nome" class="linha-secundaria">{{ alteracao.nome }}</small>
-              </td>
+      <div v-else class="tabela-rolagem">
+        <table class="tabela">
+          <thead>
+            <tr>
+              <th>Quando</th>
+              <th>Usuário</th>
+              <th>Alteração</th>
+              <th>Registro</th>
             </tr>
+          </thead>
+          <tbody>
+            <template v-for="revisao in lista.itens" :key="revisao.revisao">
+              <tr v-for="(alteracao, i) in revisao.alteracoes" :key="i">
+                <td v-if="i === 0" :rowspan="revisao.alteracoes.length">
+                  {{ formatarDataHora(revisao.dataOperacao) }}
+                </td>
+                <td v-if="i === 0" :rowspan="revisao.alteracoes.length">
+                  {{ revisao.usuarioNome ?? '—' }}
+                  <small v-if="revisao.usuarioEmail" class="linha-secundaria">
+                    {{ revisao.usuarioEmail }}
+                  </small>
+                </td>
+                <td>
+                  <span class="badge" :class="`acao-${alteracao.acao.toLowerCase()}`">
+                    {{ ACOES_AUDITORIA[alteracao.acao] ?? alteracao.acao }}
+                  </span>
+                  <small v-for="campo in alteracao.campos" :key="campo" class="linha-secundaria">
+                    {{ campo }}
+                  </small>
+                </td>
+                <td>
+                  {{ alteracao.tipo }}
+                  <small v-if="alteracao.nome" class="linha-secundaria">{{ alteracao.nome }}</small>
+                </td>
+              </tr>
 
-            <tr v-if="!revisao.alteracoes.length">
-              <td>{{ formatarDataHora(revisao.dataOperacao) }}</td>
-              <td>
-                {{ revisao.usuarioNome ?? '—' }}
-                <small v-if="revisao.usuarioEmail" class="linha-secundaria">
-                  {{ revisao.usuarioEmail }}
-                </small>
-              </td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
+              <tr v-if="!revisao.alteracoes.length">
+                <td>{{ formatarDataHora(revisao.dataOperacao) }}</td>
+                <td>
+                  {{ revisao.usuarioNome ?? '—' }}
+                  <small v-if="revisao.usuarioEmail" class="linha-secundaria">
+                    {{ revisao.usuarioEmail }}
+                  </small>
+                </td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
     </section>
   </AppLayout>
 </template>

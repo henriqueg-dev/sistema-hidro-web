@@ -31,7 +31,6 @@
       <form
         v-if="clienteSelecionadoId || orcamentoEmEdicao"
         class="form-linha"
-        style="margin-top: 1rem"
         @submit.prevent="handleSalvar"
       >
         <div class="field amplo">
@@ -78,7 +77,7 @@
           </select>
         </div>
 
-        <div class="field amplo" style="flex-basis: 100%">
+        <div class="field inteiro">
           <label for="observacoes">Observações</label>
           <textarea
             id="observacoes"
@@ -88,7 +87,7 @@
           ></textarea>
         </div>
 
-        <div class="calculo-destaque" style="flex-basis: 100%">
+        <div class="calculo-destaque inteiro">
           <span>Valor total</span>
           <strong>R$ {{ fmt(valorTotalPreview, 2) }}</strong>
         </div>
@@ -142,53 +141,55 @@
       <p v-if="carregandoLista" class="subtitle">Carregando...</p>
       <p v-else-if="!orcamentosFiltrados.length" class="subtitle">Nenhum orçamento nesse status.</p>
 
-      <table v-else class="tabela">
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Empreendimento</th>
-            <th>Quantidade</th>
-            <th>Valor total</th>
-            <th>Status</th>
-            <th>Validade</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="orc in orcamentosFiltrados" :key="orc.id">
-            <td>{{ orc.clienteNome }}</td>
-            <td>{{ orc.nomeEmpreendimento }}</td>
-            <td>{{ fmt(orc.quantidade, 0) }} {{ orc.tipoEmpreendimento === 'Prédio' ? 'apartamentos' : 'm²' }}</td>
-            <td>R$ {{ fmt(orc.valorTotal, 2) }}</td>
-            <td>
-              <select
-                :value="chavePorRotulo(STATUS_ORCAMENTO, orc.status)"
-                @change="handleMudarStatus(orc, $event.target.value)"
-              >
-                <option v-for="(rotulo, valor) in STATUS_ORCAMENTO" :key="valor" :value="valor">
-                  {{ rotulo }}
-                </option>
-              </select>
-            </td>
-            <td>
-              {{ formatarData(orc.dataValidade) }}
-              <span v-if="estaVencido(orc)" class="status vencido">Vencido</span>
-            </td>
-            <td class="acoes">
-              <button type="button" class="btn-link" @click="handleBaixarPdf(orc)">PDF</button>
-              <button type="button" class="btn-link" @click="abrirHistorico(orc)">Histórico</button>
-              <button type="button" class="btn-link" @click="iniciarEdicao(orc)">Editar</button>
-              <template v-if="paraRemover === orc.id">
-                <button type="button" class="btn-link perigo" @click="handleExcluir(orc)">Sim, remover</button>
-                <button type="button" class="btn-link" @click="paraRemover = null">Cancelar</button>
-              </template>
-              <button v-else type="button" class="btn-link perigo" @click="paraRemover = orc.id">
-                Remover
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-else class="tabela-rolagem">
+        <table class="tabela">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Empreendimento</th>
+              <th>Quantidade</th>
+              <th>Valor total</th>
+              <th>Status</th>
+              <th>Validade</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="orc in orcamentosFiltrados" :key="orc.id">
+              <td>{{ orc.clienteNome }}</td>
+              <td>{{ orc.nomeEmpreendimento }}</td>
+              <td>{{ fmt(orc.quantidade, 0) }} {{ orc.tipoEmpreendimento === 'Prédio' ? 'apartamentos' : 'm²' }}</td>
+              <td>R$ {{ fmt(orc.valorTotal, 2) }}</td>
+              <td>
+                <select
+                  :value="chavePorRotulo(STATUS_ORCAMENTO, orc.status)"
+                  @change="handleMudarStatus(orc, $event.target.value)"
+                >
+                  <option v-for="(rotulo, valor) in STATUS_ORCAMENTO" :key="valor" :value="valor">
+                    {{ rotulo }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                {{ formatarData(orc.dataValidade) }}
+                <span v-if="estaVencido(orc)" class="status vencido linha-secundaria">Vencido</span>
+              </td>
+              <td class="acoes">
+                <button type="button" class="btn-link" @click="handleBaixarPdf(orc)">PDF</button>
+                <button type="button" class="btn-link" @click="abrirHistorico(orc)">Histórico</button>
+                <button type="button" class="btn-link" @click="iniciarEdicao(orc)">Editar</button>
+                <template v-if="paraRemover === orc.id">
+                  <button type="button" class="btn-link perigo" @click="handleExcluir(orc)">Sim, remover</button>
+                  <button type="button" class="btn-link" @click="paraRemover = null">Cancelar</button>
+                </template>
+                <button v-else type="button" class="btn-link perigo" @click="paraRemover = orc.id">
+                  Remover
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <div v-if="modalAberto" class="modal-fundo" @click.self="cancelarModal">
@@ -220,15 +221,15 @@
 
         <p v-if="erroModal" class="msg erro">{{ erroModal }}</p>
 
-        <div class="form-linha modal-acoes" style="margin-top: 1rem">
+        <div class="card-acoes">
           <button type="button" :disabled="confirmandoModal" @click="confirmarModal">
             {{ confirmandoModal ? 'Aprovando...' : 'Aprovar e criar empreendimento' }}
           </button>
           <button type="button" class="btn-secundario" @click="cancelarModal">Cancelar</button>
         </div>
       </div>
-
     </div>
+
     <div v-if="historicoAberto" class="modal-fundo" @click.self="historicoAberto = false">
       <div class="card modal-caixa ampla">
         <h2>Histórico do orçamento</h2>
@@ -262,7 +263,7 @@
           </tbody>
         </table>
 
-        <div class="form-linha modal-acoes" style="margin-top: 1rem">
+        <div class="card-acoes">
           <button type="button" class="btn-secundario" @click="historicoAberto = false">Fechar</button>
         </div>
       </div>

@@ -94,14 +94,6 @@
   min-width: 240px;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: end;
-  gap: 1rem 1.25rem;
-  max-width: 900px;
-}
-
 .form-row {
   display: flex;
   gap: 1rem;
@@ -114,6 +106,11 @@
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 1rem;
+}
+
+.form-linha + .form-linha,
+.painel + .form-linha {
+  margin-top: 1rem;
 }
 
 .form-linha .field.medio {
@@ -137,6 +134,10 @@
   flex: 0 0 auto;
 }
 
+.form-linha > .inteiro {
+  flex: 1 1 100%;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -147,10 +148,28 @@
   flex: 1;
 }
 
+/* Botões lado a lado, alinhados pela base com os campos vizinhos. */
 .field.actions {
-  grid-column: 1 / -1;
-  justify-content: flex-end;
+  flex-direction: row;
   align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.field.actions > .btn-link {
+  min-height: 2.5rem;
+}
+
+/* Linha de botões no rodapé de um card ou janela. */
+.card-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.modal-caixa .card-acoes {
+  justify-content: flex-end;
 }
 
 :is(.card, .login-card) label {
@@ -167,6 +186,7 @@
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.9rem;
+  line-height: 1.25;
   background: var(--color-bg);
   color: var(--color-text);
   transition:
@@ -197,12 +217,14 @@
    classe .btn — é o mesmo visual, para ações soltas na página. */
 :is(.card, .login-card) button,
 button.btn {
-  padding: 0.65rem 1.5rem;
-  border: none;
+  padding: 0.6rem 1.5rem;
+  border: 1.5px solid transparent;
   border-radius: 8px;
   background: var(--color-primary);
   color: #fff;
+  font-size: 0.9rem;
   font-weight: 600;
+  line-height: 1.25;
   cursor: pointer;
   transition: background 0.15s ease;
   white-space: nowrap;
@@ -310,6 +332,11 @@ button.btn.acao-solta {
   font-size: 0.85rem;
 }
 
+.card > .msg:first-child,
+.calculo-registro > .msg {
+  margin-top: 0;
+}
+
 .msg.erro {
   color: var(--color-danger);
   background: var(--color-danger-light);
@@ -348,6 +375,21 @@ button.btn.acao-solta {
 
 .tabela .acoes {
   text-align: right;
+  white-space: nowrap;
+}
+
+:is(.card, .login-card) .tabela select {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+/* Tabela larga rola dentro do card em vez de estourar a página. */
+.tabela-rolagem {
+  overflow-x: auto;
+}
+
+.tabela-rolagem .tabela th {
+  white-space: nowrap;
 }
 
 .tabela .acoes button + button {
@@ -398,9 +440,10 @@ button.btn.acao-solta {
 
 .plano-lista {
   list-style: none;
+  padding: 0;
   color: var(--color-text-muted);
   font-size: 0.85rem;
-  margin-bottom: 1.25rem;
+  margin: 0 0 1.25rem;
   flex-grow: 1;
 }
 
@@ -617,15 +660,16 @@ button.btn.acao-solta {
   display: flex;
   gap: 0.25rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1.5px solid var(--color-border);
+  overflow-x: auto;
+  box-shadow: inset 0 -1.5px 0 var(--color-border);
 }
 
 .aba {
   padding: 0.6rem 1rem;
   border: none;
   border-bottom: 2px solid transparent;
-  margin-bottom: -1.5px;
   background: none;
+  white-space: nowrap;
   color: var(--color-text-muted);
   font-size: 0.9rem;
   font-weight: 600;
@@ -678,6 +722,13 @@ button.btn.acao-solta {
   padding: 1.25rem;
   background: var(--color-primary-light);
   border-radius: 8px;
+}
+
+/* O título ou cabeçalho acima já dá o respiro. */
+.card h2 + .painel,
+.card h2 + .subtitle + .painel,
+.card-header + .painel {
+  margin-top: 0;
 }
 
 .painel.em-linha {
@@ -882,6 +933,12 @@ button.btn.acao-solta {
   gap: 1.15rem;
 }
 
+.calculo-secoes.em-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.15rem 1.75rem;
+}
+
 .calculo-secao h4 {
   margin: 0 0 0.6rem;
   padding-bottom: 0.35rem;
@@ -1054,13 +1111,8 @@ button.btn.acao-solta {
 }
 
 @media (max-width: 640px) {
-  .form-grid,
   .painel {
     grid-template-columns: 1fr;
-  }
-
-  .field.actions {
-    align-items: stretch;
   }
 }
 
@@ -1254,10 +1306,6 @@ button.btn.acao-solta {
   overflow-y: auto;
 }
 
-.modal-acoes {
-  justify-content: flex-end;
-}
-
 .tabela td[rowspan] {
   vertical-align: top;
 }
@@ -1270,4 +1318,86 @@ button.btn.acao-solta {
 .badge.acao-exclusao {
   background: var(--color-danger-light);
   color: var(--color-danger);
+}
+
+/* ---------- Piscinas ---------- */
+
+/* Formulário longo: respiro uniforme entre os blocos. */
+.pilha > * + * {
+  margin-top: 1rem;
+}
+
+.titulo-secao {
+  margin: 1.75rem 0 0.75rem;
+  font-size: 0.95rem;
+}
+
+.pilha > .titulo-secao + .subtitle {
+  margin-top: 0;
+}
+
+.bloco-tabela {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.bloco-tabela summary {
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bloco-tabela[open] summary {
+  margin-bottom: 0.75rem;
+}
+
+.bloco-tabela > .subtitle {
+  margin: 0.5rem 0 0.75rem;
+}
+
+.trecho-editor {
+  padding: 1rem 1.25rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.trecho-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+}
+
+.conexoes {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--color-primary-light);
+  border-radius: 8px;
+}
+
+.conexao-linha + .conexao-linha {
+  margin-top: 0.75rem;
+}
+
+/* Valor calculado exibido na altura de um campo. */
+.conexao-linha output {
+  padding: calc(0.6rem + 1.5px) 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.conexoes-rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.conexoes-rodape:first-child {
+  margin-top: 0;
 }
